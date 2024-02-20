@@ -2,32 +2,15 @@ function varargout = jIK(S,M,THETA0, XYZd,thresh)
 addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr");
 n = length(S);
 
-THETA = THETA0;
+[XYZc, T, V] = jFK(S,M,THETA0)
 
-T = eye(4);
-J = zeros(6,n);
+Tsb = T{n};
+Tbs = inv(Tsb);
+Vb = Adjoint(Tbs)*V{n}
 
-for i = 1:n
-    J(:,i) = Adjoint(T)*S{i};
-    V = VecTose3(S{i})*THETA(i);
-    T = T*expm(V);
-end
-T_FK = T*M;
+e = (XYZc - XYZd);
 
-% XYZc = T_FK*[0,0,0,1]';
-% e = XYZc(1:3) - XYZd;
-
-% while norm(e) > thresh
-%     for i = 1:n
-%         Js(:,i) = Adjoint(T_FK)*S{i};
-%         V = VecTose3(S{i})*THETA(i);
-%         T = T*expm(V);
-%         T_FK = T*M{i};
-%     end
-    
-% end
-
-varargout = {J};
+varargout = {e};
 
     function se3mat = VecTose3(V)
         se3mat = [VecToso3(V(1: 3)), V(4: 6); 0, 0, 0, 0];

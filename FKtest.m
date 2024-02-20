@@ -77,4 +77,4 @@ XYZd = [100; 100; 100];
 thresh = 0.1;
 
 % Foward Kinematics
-THETA_IK = jIK(S,M{6},THETA0,XYZd,thresh)
+THETA_IK = jIK(S,M,THETA0,Tsd,thresh)
