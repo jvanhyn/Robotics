@@ -1,4 +1,4 @@
-clear  
+clear all 
 clc 
 close all
 addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")
@@ -141,7 +141,6 @@ for i = 1:3
      zlim(ax, [0 1200]);
      view(ax, 3)
      hold(ax, 'on')
-     pbaspect([1 1 1])
      view(-145,35)
      grid on
 
@@ -266,26 +265,26 @@ for i = 1:3
      yL=ylim;
      zL=zlim;
      offset = 0.95;
-     text(offset*xL(1),offset*yL(1),offset*zL(2),txt,'HorizontalAlignment','right','VerticalAlignment','top')
-     text(-20,0,0,'\{s\}','HorizontalAlignment','left','VerticalAlignment','bottom')
-     text(P_ee(1)+20,P_ee(2),P_ee(3)+20,'\{b\}','HorizontalAlignment','right','VerticalAlignment','bottom')
-     title("Configuration " + string(i))
-     g = 0.1;
-     [X,Y,Z] = ellipsoid(P_ee(1),P_ee(2),P_ee(3),g*sqrt(eign{i}(4)),g*sqrt(eign{i}(5)),g*sqrt(eign{i}(6)));
-     sf = surf(X,Y,Z,"LineStyle","none");
-     alpha(sf, 0.5);
-     rotate(sf,[1,0,0],atan(eigv{i}(3)/eigv{i}(2)));
-     rotate(sf,[0,1,0],atan(eigv{i}(3)/eigv{i}(1)));
-     rotate(sf,[0,0,1],atan(eigv{i}(2)/eigv{i}(1)));
+     % text(offset*xL(1),offset*yL(1),offset*zL(2),txt,'HorizontalAlignment','right','VerticalAlignment','top')
+     % text(-20,0,0,'\{s\}','HorizontalAlignment','left','VerticalAlignment','bottom')
+     % text(P_ee(1)+20,P_ee(2),P_ee(3)+20,'\{b\}','HorizontalAlignment','right','VerticalAlignment','bottom')
+     % title("Configuration " + string(i))
+     % g = 0.0001;
+     % [X,Y,Z] = ellipsoid(0,0,0,g,g,g); 
+
+     % for j = 1:21
+     %      for k = 1:21
+     %           TEMP = eigenvals{i}*eigenvects{i}*[0;0;0;X(j,k);Y(j,k);Z(j,k)];
+     %           A{i}(j,k,:) = TEMP(4:end) + mP_ee{i}(1:3);
+     %      end
+     % end
+
+     % sf = surf(A{i}(:,:,1),A{i}(:,:,2),A{i}(:,:,3),"LineStyle","none");
+     % alpha(sf, 0.5);
+
      hold off
 
 end
-
-
-
-
-
-
 
 function se3mat = VecTose3(V)
      se3mat = [VecToso3(V(1: 3)), V(4: 6); 0, 0, 0, 0];
