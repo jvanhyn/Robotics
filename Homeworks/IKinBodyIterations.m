@@ -5,22 +5,46 @@ function [thetalist, success] = IKinBodyIterations(Blist, M, T, thetalist0, eomg
     maxiterations = 20;
     Vb = se3ToVec(MatrixLog6(TransInv(FKinBody(M, Blist, thetalist)) * T));
     err = norm(Vb(1: 3)) > eomg || norm(Vb(4: 6)) > ev;
+    Tsb = FKinBody(M, Blist, thetalist)
+
+    disp("Iteration:")
+    disp(i)
+    disp("Configuration:")
+    disp(thetalist)
+    disp("Twist")
+    disp(Vb)
+    disp("Position")
+    disp(Tsb)
+    disp("Rotation Error")
+    disp(norm(Vb(1: 3)))
+    disp("Position Error")
+    disp(norm(Vb(4: 6)))
 
     while err && i < maxiterations
+        thetalist = wrapToPi(thetalist);
         thetalist = thetalist + pinv(JacobianBody(Blist, thetalist)) * Vb;
+        i = i + 1;
         Vb = se3ToVec(MatrixLog6(TransInv(FKinBody(M, Blist, thetalist)) * T));
         err = norm(Vb(1: 3)) > eomg || norm(Vb(4: 6)) > ev;
-        i = i + 1;
 
-        Tsb = M*expm(Vb);
+        Tsb = FKinBody(M, Blist, thetalist)
 
-        print(i)
-        print(thetalist)
-        print(Vb)
-        print(Tsb)
-        print(norm(Vb(1: 3)))
-        print(norm(Vb(4: 6)))
+        thetaitterations(:,i) = thetalist;
+        disp("Iteration:")
+        disp(i)
+        disp("Configuration:")
+        disp(thetalist)
+        disp("Twist")
+        disp(Vb)
+        disp("Position")
+        disp(Tsb)
+        disp("Rotation Error")
+        disp(norm(Vb(1: 3)))
+        disp("Position Error")
+        disp(norm(Vb(4: 6)))
 
     end
+    
+    writematrix(thetaitterations',"thetaitterations.csv")
     success = ~ err;
-    end
+end
