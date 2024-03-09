@@ -7,11 +7,13 @@ rotz = @(t) [cos(t) -sin(t) 0 ; sin(t) cos(t) 0 ; 0 0 1] ;
 
 R = @(x,y,z) rotz(x)*roty(y)*rotz(z);
 
-Rsb = R(0,pi/6,0)'*R(pi/4,0,0)
+Rsb = R(0,pi/6,0);
+Rsd = R(pi/4,0,0);
+Rbd = Rsb*Rsd;
 
-w = logm(Rsb)
+w = logm(Rbd);
 
-Vb = [-w(3,2);w(1,3);-w(1,2)]
+Vb = [-w(3,2);w(1,3);-w(1,2)];
 
 [0,pi/2,0]' + [0.5 0 0; 0 1 0; sqrt(3)/2 0 1]*Vb
 

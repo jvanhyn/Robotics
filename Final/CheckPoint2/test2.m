@@ -3,21 +3,26 @@ clc
 
 
 
-T = @(x,y,z,phi) [cos(phi)  -sin(phi) 0 x;
+Tz = @(x,y,z,phi) [cos(phi)  -sin(phi) 0 x;
                   sin(phi)   cos(phi) 0 y;
                   0          0        1 z;
                   0          0        0 1];
+
+Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
+                  0          1 0        y;
+                  -sin(phi)  0 cos(phi) z;
+                  0          0        0 1]
 
 Tse_i = [1.0000    0         0    0.3334;
          0    1.0000         0         0;
          0         0    1.0000    0.7839;
          0         0         0    1.0000];
 
-Tsc_i = T( 1,  0,  0,     0);
-Tsc_f = T( 0, -1,  0, -pi/2);
+Tsc_i = Tz( 1,  0,  0,     0);
+Tsc_f = Tz( 0, -1,  0, -pi/2);
 
-Tce_g =  T( 0, 0,   0, 0);
-Tce_s =  T( 0, 0, 0.5, 0);
+Tce_g =  Ty(0,0,0,pi);
+Tce_s =  Ty(0,0,0.25,pi)
 k = 1;
 
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);

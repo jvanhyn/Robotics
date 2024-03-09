@@ -1,7 +1,6 @@
 clear 
 clc
 
-addpath('/Users/jvanhyn/Documents/GitHub/Robotics/mr')
 
 T_sb = @(phi,x,y) [cos(phi)  -sin(phi) 0 x; sin(phi) cos(phi) 0 y; 0  0 1 0.0963; 0 0 0 1];
 
@@ -18,15 +17,13 @@ T_0e = @(q) M_0e*expm(VecTose3(B1)*q(1))*expm(VecTose3(B2)*q(2))*expm(VecTose3(B
 
 T_se = @(phi,x,y,q) T_sb(phi,x,y) * T_b0 * T_0e(q);
 
-T_sc = [1 0 0 1; 0 1 0 0; 0 0 1 0; 0 0 0 1];
+J = @(q) [Adjoint(expm(-VecTose3(B5)*q(5))*expm(-VecTose3(B4)*q(4))*expm(-VecTose3(B3)*q(3))*expm(-VecTose3(B2)*q(2)))*q(1);
+          Adjoint(expm(-VecTose3(B5)*q(5))*expm(-VecTose3(B4)*q(4))*expm(-VecTose3(B3)*q(3)))*q(2);
+          Adjoint(expm(-VecTose3(B5)*q(5))*expm(-VecTose3(B4)*q(4)))*q(3);
+          Adjoint(expm(-VecTose3(B5)*q(5)))*q(4);
+          q(5);]
 
 save('setup')
 
-% gamma = [-pi/4, pi/4, -pi/4, pi/4];
-% betta = [0,0,0,0];
 
-% h = @(phi,x,y,i) [x*sin(betta(i) + gamma(i)) - y*cos(betta(i) + gamma(i)), cos(betta(i)+gamma(i)+phi), sin(betta(i) + gamma(i) + phi)];
-
-% H = @(phi,x,y) [h(phi,x,y,1),h(phi,x,y,2),h(phi,x,y,3),h(phi,x,y,4)];
-% H_inv = @(phi,x,y) pinv(H(@phi,x,y));
 

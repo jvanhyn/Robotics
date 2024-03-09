@@ -19,6 +19,7 @@ function [thetalist, success] = IKinBodyIterations(Blist, M, T, thetalist0, eomg
     disp(norm(Vb(1: 3)))
     disp("Position Error")
     disp(norm(Vb(4: 6)))
+    thetaitterations(:,i+1) = thetalist;
 
     while err && i < maxiterations
         thetalist = wrapToPi(thetalist);
@@ -29,7 +30,7 @@ function [thetalist, success] = IKinBodyIterations(Blist, M, T, thetalist0, eomg
 
         Tsb = FKinBody(M, Blist, thetalist)
 
-        thetaitterations(:,i) = thetalist;
+        thetaitterations(:,i+1) = thetalist;
         disp("Iteration:")
         disp(i)
         disp("Configuration:")
