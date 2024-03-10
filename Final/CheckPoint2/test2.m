@@ -51,12 +51,6 @@ h = gca;
 [SX,SY] = meshgrid(linspace(-2,2,100),linspace(-2,2,100));
 SZ = zeros(100,100);
 
-a
-a
-a
-axis
-
-
 for i = 1:length(trajectory(:,1))
 cla
 hold on
