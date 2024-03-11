@@ -14,18 +14,14 @@ Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
                    -sin(phi) 0 cos(phi) z;
                    0         0      0   1];
 
-% Tse_i = [1.0000    0         0    0.3334;
-%          0    1.0000         0         0;
-%          0         0    1.0000    0.7839;
-%          0         0         0    1.0000];
-Tse_i = Ty(.3334, 0, .7839, pi); % AT: EDITED % initial configuration of the end effector
 
-Tsc_i = Tz( 1,  0,  0,     0); % initial configuration of the cube
-Tsc_f = Tz( 0, -1,  0, -pi/2); % final configuration of the cube
+Tse_i = Ty(.3334, 0, .7839, pi/2);  % AT: EDITED % initial configuration of the end effector
 
-Tce_g =  Ty( 0, 0,   0, pi); % grasp config of the ee wrt {c}
-%Tce_s =  Tz( 0, 0, 0.5, 0);
-Tce_s = Ty(0,0,.25,pi); % AT: EDITED % standoff config of the ee wrt {c}
+Tsc_i = Tz( 1,  0,  0,     0);      % initial configuration of the cube
+Tsc_f = Tz( 0, -1,  0, -pi/2);      % final configuration of the cube
+
+Tce_g =  Ty( 0, 0,   0, pi);        % grasp config of the ee wrt {c}
+Tce_s = Ty(0,0,.25,pi);             % AT: EDITED % standoff config of the ee wrt {c}
 k = 1;
 
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
@@ -51,8 +47,7 @@ ymax = 1;
 zmax = 1;
 h = gca;
 
-[SX,SY] = meshgrid(linspace(-2,2,100),linspace(-2,2,100));
-SZ = zeros(100,100);
+SZ = zeros(11,11);
 
 for i = 1:length(trajectory(:,1))
 cla
@@ -65,13 +60,17 @@ plot3([0, 0], [0 0], [0,h.ZLim(2)],'k');
 xlim([x(i)-xmax,x(i)+xmax])
 ylim([y(i)-ymax,y(i)+ymax])
 zlim([z(i)-zmax,z(i)+zmax])
-surf(SX,SY,SZ)
-colormap summer
-shading interp
+[SX,SY] = meshgrid(linspace(-2*xmax,2*xmax,11),linspace(-2*ymax,2* ...
+    ...
+    ymax,11));
+s = surf(SX,SY,SZ);
+s.EdgeColor = 'k';
+% colormap summer
+% shading interp
 hold off
 view(50,20)
 drawnow
-pause(0.1)
+pause(0.01)
 end
 
 

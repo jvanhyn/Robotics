@@ -26,8 +26,10 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
             du(i) = speed_max;
         end
     end
-% AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
-% vel.s)
+
+   % AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
+   % vel.s)
+
     % ensure that joint speeds are under the speed threshold
     for i = 1:5
         if(abs(dtheta(i)) > speed_max)
@@ -39,8 +41,9 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
     u = u0 + du.*dt;
     theta = theta0 + dtheta.*dt;
 
-  % Calculate the next state of the chassis configuration using odometry
-    % AT: what are l,w,r?
+    % Calculate the next state of the chassis configuration using odometry
+   % AT: what are l,w,r?
+   % JVH: w,l, and r are the dimentions of the mechanum wheels (width,length, radius). 
     l = 1;
     w = 1;
     r = 1;
