@@ -2,8 +2,8 @@ close all
 clear
 clc
 
-run("/Users/jvanhyn/Documents/GitHub/Robotics/Final/setup.m")
-load("/Users/jvanhyn/Documents/GitHub/Robotics/Final/setup.mat","T_0e");
+% run("/Users/jvanhyn/Documents/GitHub/Robotics/Final/setup.m")
+% load("/Users/jvanhyn/Documents/GitHub/Robotics/Final/setup.mat","T_0e");
 
 du_max = 10;
 
@@ -41,9 +41,6 @@ end
 
 writematrix(Q,'robotMotion.csv')
 
-for i = 1:N
-    xyz(:,i) = T_0e(theta(:,i))*[0;0;0;1];
-end
 
 
 close 
@@ -73,37 +70,41 @@ drawnow
 pause(0.01)
 end
 
-close
-fig2 = figure(2);
-title("Robot Arm Configuration")
-axis([-1 1 -1 1 -1 1])
-pbaspect([1 1 1])
-daspect([1 1 1])
-view(3)
+% for i = 1:N
+%     xyz(:,i) = T_0e(theta(:,i))*[0;0;0;1];
+% end
 
-x = xyz(1,:);
-y = xyz(2,:);
-z = xyz(3,:);
-
-xmax = 1;
-ymax = 1;
-zmax = 1;
-h = gca;
-
-for i = 1:N
-cla
-hold on
-plot3(x(1:i),y(1:i),z(1:i))
-scatter3(x(i),y(i),z(i),'filled')
-plot3(h.XLim, [0 0], [0 0],'k')
-plot3([0, 0], h.YLim, [0 0],'k');
-plot3([0, 0], [0 0], h.ZLim,'k');
-xlim([x(i)-xmax,x(i)+xmax])
-ylim([y(i)-ymax,y(i)+ymax])
-zlim([z(i)-zmax,z(i)+zmax])
-hold off
-drawnow
-pause(0.01)
-end
+% close
+% fig2 = figure(2);
+% title("Robot Arm Configuration")
+% axis([-1 1 -1 1 -1 1])
+% pbaspect([1 1 1])
+% daspect([1 1 1])
+% view(3)
+% 
+% x = xyz(1,:);
+% y = xyz(2,:);
+% z = xyz(3,:);
+% 
+% xmax = 1;
+% ymax = 1;
+% zmax = 1;
+% h = gca;
+% 
+% for i = 1:N
+% cla
+% hold on
+% plot3(x(1:i),y(1:i),z(1:i))
+% scatter3(x(i),y(i),z(i),'filled')
+% plot3(h.XLim, [0 0], [0 0],'k')
+% plot3([0, 0], h.YLim, [0 0],'k');
+% plot3([0, 0], [0 0], h.ZLim,'k');
+% xlim([x(i)-xmax,x(i)+xmax])
+% ylim([y(i)-ymax,y(i)+ymax])
+% zlim([z(i)-zmax,z(i)+zmax])
+% hold off
+% drawnow
+% pause(0.01)
+% end
 
 
