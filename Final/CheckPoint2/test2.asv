@@ -27,6 +27,48 @@ k = 1;
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 
 writematrix(trajectory,"trajectory.csv")
+%% Plot the trajectory
+plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
 
-run TestPlot.m
+close
+fig2 = figure(2);
+title("Robot Arm Configuration")
+axis([-1 1 -1 1 -1 1])
+pbaspect([1 1 1])
+daspect([1 1 1])
+grid on
+view(3)
+x = trajectory(:,10);
+y = trajectory(:,11);
+z = trajectory(:,12);
+
+xmax = 1;
+ymax = 1;
+zmax = 1;
+h = gca;
+
+SZ = zeros(11,11);
+
+for i = 1:length(trajectory(:,1))
+cla
+hold on
+plot3(x(1:i),y(1:i),z(1:i))
+scatter3(x(i),y(i),z(i),'filled')
+;
+xlim([x(i)-xmax,x(i)+xmax])
+ylim([y(i)-ymax,y(i)+ymax])
+zlim([z(i)-zmax,z(i)+zmax])
+[SX,SY] = meshgrid(linspace(-2*xmax,2*xmax,11),linspace(-2*ymax,2*ymax,11));
+s = surf(SX,SY,SZ);
+s.EdgeColor = 'k';
+s.FaceColor = 'w';
+
+shading interp
+axis off
+hold off
+view(50,20)
+drawnow
+pause(0.01)
+end
+
 
