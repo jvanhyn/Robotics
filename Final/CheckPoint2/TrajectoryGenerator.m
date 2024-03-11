@@ -1,24 +1,42 @@
 function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
-    addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")
-    N = k/0.1;
+    % TrajectoryGenerator creates the reference trajectory intended for the
+    % end-effector to follow.
 
-    Tse_gi = Tsc_i*Tce_g;
-    Tse_gf = Tsc_f*Tce_g;
-    Tse_si = Tsc_i*Tce_s;
-    Tse_sf = Tsc_f*Tce_s;
+    % INPUTS:
+    % Tse_i: initial configuration of the end-effector wrt space frame, {s} 
+    % Tsc_i: initial configuration of the object to be grasped wrt space frame, {s} 
+    % Tsc_f: desired final configuration of the object to be grasped wrt space frame, {s} 
+    % Tce_g: configuration of the end-effector relative to the object while grasping
+    % Tce_s: configuration of the end-effector above the object before and after grasping it
+    % k: number of trajectory reference configurations per .01 seconds
 
+    % OUPUT:
+    % This function will output a .csv file with the entire reference
+    % trajectory represented as N = t*k/0.01 configurations.  Each row in
+    % the .csv file will correspond to one configuration, Tse, per instant in
+    % time where each variable is expressed as follows: r11, r12, r13, r21,
+    % r22, r23, r31, r32, r33, px, py, pz, gripper_state, where the gripper
+    % state = 0 for open and 1 for closed.
+
+    % addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")
+    N = k/0.01; % AT: EDITED time step; also, do we want to include time, t, as an input or nah?
+    
+    % Define end effector configurations for each waypoint
+    Tse_gi = Tsc_i*Tce_g; % grasp initial configuration
+    Tse_gf = Tsc_f*Tce_g; % grasp final configuration
+    Tse_si = Tsc_i*Tce_s; % standoff initial configuration
+    Tse_sf = Tsc_f*Tce_s; % standoff final configuration
+
+    % Define trajectory segments
     Traj1 = ScrewTrajectory(Tse_i,Tse_si,1,N,3);
     Traj2 = ScrewTrajectory(Tse_si,Tse_gi,1,N,3);
-    Traj3 = ScrewTrajectory(Tse_gi,Tse_gi,1,63,3);
+    Traj3 = ScrewTrajectory(Tse_gi,Tse_gi,1,N,3); % AT: EDITED % note: N >= 63for opening and closing actions, see footnote 2 on project assignemnt doc
     Traj4 = ScrewTrajectory(Tse_gi,Tse_si,1,N,3);
     Traj5 = ScrewTrajectory(Tse_si,Tse_sf,1,N,3);
     Traj6 = ScrewTrajectory(Tse_sf,Tse_gf,1,N,3);
-    Traj7 = ScrewTrajectory(Tse_gf,Tse_gf,1,63,3);
+    Traj7 = ScrewTrajectory(Tse_gf,Tse_gf,1,N,3); % AT: EDITED % note: N >= 63for opening and closing actions, see footnote 2 on project assignemnt doc
     Traj8 = ScrewTrajectory(Tse_gf,Tse_sf,1,N,3);
-
-
-
-
+    
     for i = 1:N
         T1(i,:) = [Traj1{i}(1,1:3),Traj1{i}(2,1:3),Traj1{i}(3,1:3),Traj1{i}(1:3,4)',0]; 
         T2(i,:) = [Traj2{i}(1,1:3),Traj2{i}(2,1:3),Traj2{i}(3,1:3),Traj2{i}(1:3,4)',0]; 
@@ -29,7 +47,7 @@ function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
         T7(i,:) = [Traj7{i}(1,1:3),Traj7{i}(2,1:3),Traj7{i}(3,1:3),Traj7{i}(1:3,4)',0]; 
         T8(i,:) = [Traj8{i}(1,1:3),Traj8{i}(2,1:3),Traj8{i}(3,1:3),Traj8{i}(1:3,4)',0]; 
     end
-
+% Concatanate trajectory segments
 trajectory = [T1;T2;T3;T4;T5;T6;T7;T8];
 
 end
