@@ -1,5 +1,5 @@
 clear all; close all; clc;
-addpath(cd,'../mr')
+addpath(cd,'../mr') % Add path to Modern Robotics scripts
 
 %% TrajectoryGenerator Test script
 % Generates a .csv file to test that the end-effector moves through the
