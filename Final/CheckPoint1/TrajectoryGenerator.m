@@ -19,7 +19,7 @@ function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
     % state = 0 for open and 1 for closed.
 
     % addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")
-    N = k/0.01; % AT: EDITED time step; also, do we want to include time, t, as an input or nah?
+    N = k/0.01; % Steps
     
     % Define end effector configurations for each waypoint
     Tse_gi = Tsc_i*Tce_g; % grasp initial configuration
