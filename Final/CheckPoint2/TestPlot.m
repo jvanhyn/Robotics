@@ -1,47 +1,64 @@
-%% Plot the Trajectory
-fig1 = figure(1);
-title("Trajectory Overview")
-plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
 
-fig2 = figure(2);
-title("Robot Trajectory")
-axis([-1 1 -1 1 -1 1])
+
+close 
+fig1 = figure(1);
+title("Robot Spacial Configuration")
 pbaspect([1 1 1])
 daspect([1 1 1])
 grid on
-view(3)
-x = trajectory(:,10);
-y = trajectory(:,11);
-z = trajectory(:,12);
 
-xmax = 1.5;
-ymax = 1.5;
-zmax = 1.5;
-h = gca;
-
-SZ = zeros(11,11);
-
-for i = 1:length(trajectory(:,1))
-cla(h)
+xmax = 1;
+ymax = 1;
+for i = 1:N
+cla
 hold on
-plot3(h,x(1:i),y(1:i),z(1:i),'g')
-scatter3(h,x(i),y(i),z(i),'filled')
-xlim(h,[x(i)-xmax,x(i)+xmax])
-ylim(h,[y(i)-ymax,y(i)+ymax])
-zlim(h,[z(i)-zmax,z(i)+zmax])
-[SX,SY] = meshgrid(linspace(-2*xmax,2*xmax,11),linspace(-2*ymax,2*ymax,11));
-s = surf(h,SX,SY,SZ);
-g = [0.7,0.7,0.7];
-s.EdgeColor = g;
-s.FaceColor = 'w';
-plot3(h,h.XLim, [0 0], [0 0],'Color',g,'LineWidth',2);
-plot3(h,[0, 0], h.YLim, [0 0],'Color',g,'LineWidth',2);
-plot3(h,[0, 0], [0 0], [0,h.ZLim(2)],'Color',g,'LineWidth',2)
-axis off
+subtitle(t(i))
+plot(q(2,1:i),q(3,1:i))
+quiver(q(2,i), q(3,i), cos(q(1,i)), sin(q(1,i)),0.1,"LineWidth",2);
+scatter(q(2,i),q(3,i),"filled");
+xlim([q(2,i)-xmax,q(2,i)+xmax])
+ylim([q(3,i)-ymax,q(3,i)+ymax])
+scatter(0,0,'k',"filled");
+yline(0)
+xline(0)
 hold off
-fig2.Color = 'w';
-view(50,20)
 drawnow
 pause(0.01)
 end
 
+% for i = 1:N
+%     xyz(:,i) = T_0e(theta(:,i))*[0;0;0;1];
+% end
+% 
+% close
+% fig2 = figure(2);
+% title("Robot Arm Configuration")
+% axis([-1 1 -1 1 -1 1])
+% pbaspect([1 1 1])
+% daspect([1 1 1])
+% view(3)
+% 
+% x = xyz(1,:);
+% y = xyz(2,:);
+% z = xyz(3,:);
+% 
+% xmax = 1;
+% ymax = 1;
+% zmax = 1;
+% h = gca;
+% 
+% for i = 1:N
+% cla
+% hold on
+% plot3(x(1:i),y(1:i),z(1:i))
+% scatter3(x(i),y(i),z(i),'filled')
+% plot3(h.XLim, [0 0], [0 0],'k')
+% plot3([0, 0], h.YLim, [0 0],'k');
+% plot3([0, 0], [0 0], h.ZLim,'k');
+% xlim([x(i)-xmax,x(i)+xmax])
+% ylim([y(i)-ymax,y(i)+ymax])
+% zlim([z(i)-zmax,z(i)+zmax])
+% hold off
+% drawnow
+% pause(0.01)
+% end

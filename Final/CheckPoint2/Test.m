@@ -1,33 +1,52 @@
-clear all; close all; clc;
+close all; clear; clc
 
-%% TrajectoryGenerator Test script
-% Generates a .csv file to test that the end-effector moves through the
-% desired trajectort on CoppeliaSim, Scene 8
+%% Test the NextState function
 
-% Rotation matrix helper functions
-Tz = @(x,y,z,phi) [cos(phi)  -sin(phi) 0 x;
-                  sin(phi)   cos(phi) 0 y;
-                  0          0        1 z;
-                  0          0        0 1];
-Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
-                   0         1      0   y;
-                   -sin(phi) 0 cos(phi) z;
-                   0         0      0   1];
+% time variables
+t0 = 0;
+tf = 2;
+dt = 0.01;
 
+N = cast((tf - t0)/dt,"uint8");
+t = linspace(t0,tf,N);
 
-Tse_i = Ty(.3334, 0, .7839, pi/2);  % AT: EDITED % initial configuration of the end effector
+% initial robot configuration
+q0 = [0,0,0]';
+u0 = [0,0,0,0]';
+theta0 = [0,0,0,0,0]';
 
-Tsc_i = Tz( 1,  0,  0,     0);      % initial configuration of the cube
-Tsc_f = Tz( 0, -1,  0, -pi/2);      % final configuration of the cube
+gripClosed = false;
 
-Tce_g =  Ty( 0, 0,   0, pi);        % grasp config of the ee wrt {c}
-Tce_s = Ty(0,0,.25,pi);             % AT: EDITED % standoff config of the ee wrt {c}
-k = 1;
+% maximum motor angular velocity
+speed_max = 10;
 
-trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
+% constant control inputs
+du = -10*[-0.5,1,1,-0.5]';
+dtheta = [0,0,0,10,0]';
 
-writematrix(trajectory,"trajectory.csv")
+% preallocate vectors for use in simulation loop 
+q = zeros(3,N);
+u = zeros(4,N);
+theta = zeros(5,N);
 
-%% Plots the Trajectory
+% Setting initial conditions for use in simulation loop 
+q(:,1) = q0;
+u(:,1) = u0;
+theta(:,1) = theta0;
+
+% Setting format for output to Copellia Sym
+Q(1,:) = [q(:,1);theta(:,1);u(:,1);gripClosed]';
+
+%% Running the simulation
+for i = 1:N
+    [q(:,i+1),theta(:,i+1),u(:,i+1)] = NextState(q(:,i),u(:,i),theta(:,i),du,dtheta,dt,speed_max);
+    Q(i+1,:) = [q(:,i+1);theta(:,i+1);u(:,i+1);gripClosed]';
+end
+
+%% Export data
+writematrix(Q,'robotMotion.csv')
+
+%% Plot results
 run TestPlot.m
+
 
