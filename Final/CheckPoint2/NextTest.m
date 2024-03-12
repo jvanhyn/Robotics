@@ -47,6 +47,6 @@ end
 writematrix(Q,'robotMotion.csv')
 
 %% Plot results
-run TestPlot.m
+run NextTestAnimation.m
 
 

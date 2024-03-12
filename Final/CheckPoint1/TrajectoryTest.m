@@ -1,4 +1,5 @@
 clear all; close all; clc;
+addpath(cd,'../mr')
 
 %% TrajectoryGenerator Test script
 % Generates a .csv file to test that the end-effector moves through the
@@ -34,6 +35,7 @@ title("Trajectory Overview")
 view(50,20)
 grid on
 %% Animates the Trajectory
-run TestPlotAnimation.m
+run TrajectoryTestAnimation.m
+
 
 
