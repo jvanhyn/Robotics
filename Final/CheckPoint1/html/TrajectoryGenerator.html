@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>TrajectoryGenerator</title>
+<meta name="generator" content="MATLAB 23.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-03-12">
+<meta name="DC.source" content="TrajectoryGenerator.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
+    <span class="comment">% TrajectoryGenerator creates the reference trajectory intended for the</span>
+    <span class="comment">% end-effector to follow.</span>
+
+    <span class="comment">% INPUTS:</span>
+    <span class="comment">% Tse_i: initial configuration of the end-effector wrt space frame, {s}</span>
+    <span class="comment">% Tsc_i: initial configuration of the object to be grasped wrt space frame, {s}</span>
+    <span class="comment">% Tsc_f: desired final configuration of the object to be grasped wrt space frame, {s}</span>
+    <span class="comment">% Tce_g: configuration of the end-effector relative to the object while grasping</span>
+    <span class="comment">% Tce_s: configuration of the end-effector above the object before and after grasping it</span>
+    <span class="comment">% k: number of trajectory reference configurations per .01 seconds</span>
+
+    <span class="comment">% OUPUT:</span>
+    <span class="comment">% This function will output a .csv file with the entire reference</span>
+    <span class="comment">% trajectory represented as N = t*k/0.01 configurations.  Each row in</span>
+    <span class="comment">% the .csv file will correspond to one configuration, Tse, per instant in</span>
+    <span class="comment">% time where each variable is expressed as follows: r11, r12, r13, r21,</span>
+    <span class="comment">% r22, r23, r31, r32, r33, px, py, pz, gripper_state, where the gripper</span>
+    <span class="comment">% state = 0 for open and 1 for closed.</span>
+
+    <span class="comment">% addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")</span>
+    N = k/0.01; <span class="comment">% AT: EDITED time step; also, do we want to include time, t, as an input or nah?</span>
+
+    <span class="comment">% Define end effector configurations for each waypoint</span>
+    Tse_gi = Tsc_i*Tce_g; <span class="comment">% grasp initial configuration</span>
+    Tse_gf = Tsc_f*Tce_g; <span class="comment">% grasp final configuration</span>
+    Tse_si = Tsc_i*Tce_s; <span class="comment">% standoff initial configuration</span>
+    Tse_sf = Tsc_f*Tce_s; <span class="comment">% standoff final configuration</span>
+
+    <span class="comment">% Define trajectory segments</span>
+    Traj1 = ScrewTrajectory(Tse_i,Tse_si,1,N,3);  <span class="comment">% Initial      to     Standby-1</span>
+    Traj2 = ScrewTrajectory(Tse_si,Tse_gi,1,N,3); <span class="comment">% Standby-1    to     Cube-Initial</span>
+    Traj3 = ScrewTrajectory(Tse_gi,Tse_gi,1,63,3); <span class="comment">% Cube-Initial to     Cube-Initial</span>
+    Traj4 = ScrewTrajectory(Tse_gi,Tse_si,1,N,3); <span class="comment">% Cube-Initial to     Standby-1</span>
+    Traj5 = ScrewTrajectory(Tse_si,Tse_sf,1,N,3); <span class="comment">% Standby-1    to     Standby-2</span>
+    Traj6 = ScrewTrajectory(Tse_sf,Tse_gf,1,N,3); <span class="comment">% Standby-2    to     Cube-Final</span>
+    Traj7 = ScrewTrajectory(Tse_gf,Tse_gf,1,63,3); <span class="comment">% Cube-Final   to     Cube-Final</span>
+    Traj8 = ScrewTrajectory(Tse_gf,Tse_sf,1,N,3); <span class="comment">% Cube-Final   to     Standby-2</span>
+
+    <span class="comment">% Reformat data for CopeliaSym</span>
+    <span class="keyword">for</span> i = 1:N
+        T1(i,:) = [Traj1{i}(1,1:3),Traj1{i}(2,1:3),Traj1{i}(3,1:3),Traj1{i}(1:3,4)',0];
+        T2(i,:) = [Traj2{i}(1,1:3),Traj2{i}(2,1:3),Traj2{i}(3,1:3),Traj2{i}(1:3,4)',0];
+        T4(i,:) = [Traj4{i}(1,1:3),Traj4{i}(2,1:3),Traj4{i}(3,1:3),Traj4{i}(1:3,4)',1];
+        T5(i,:) = [Traj5{i}(1,1:3),Traj5{i}(2,1:3),Traj5{i}(3,1:3),Traj5{i}(1:3,4)',1];
+        T6(i,:) = [Traj6{i}(1,1:3),Traj6{i}(2,1:3),Traj6{i}(3,1:3),Traj6{i}(1:3,4)',1];
+        T8(i,:) = [Traj8{i}(1,1:3),Traj8{i}(2,1:3),Traj8{i}(3,1:3),Traj8{i}(1:3,4)',0];
+    <span class="keyword">end</span>
+
+    <span class="keyword">for</span> i = 1:63
+        T3(i,:) = [Traj3{i}(1,1:3),Traj3{i}(2,1:3),Traj3{i}(3,1:3),Traj3{i}(1:3,4)',1];
+        T7(i,:) = [Traj7{i}(1,1:3),Traj7{i}(2,1:3),Traj7{i}(3,1:3),Traj7{i}(1:3,4)',0];
+    <span class="keyword">end</span>
+
+<span class="comment">% Concatanate trajectory segments</span>
+trajectory = [T1;T2;T3;T4;T5;T6;T7;T8];
+
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput error">Not enough input arguments.
+
+Error in TrajectoryGenerator (line 22)
+    N = k/0.01; % AT: EDITED time step; also, do we want to include time, t, as an input or nah?
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
+    % TrajectoryGenerator creates the reference trajectory intended for the
+    % end-effector to follow.
+
+    % INPUTS:
+    % Tse_i: initial configuration of the end-effector wrt space frame, {s} 
+    % Tsc_i: initial configuration of the object to be grasped wrt space frame, {s} 
+    % Tsc_f: desired final configuration of the object to be grasped wrt space frame, {s} 
+    % Tce_g: configuration of the end-effector relative to the object while grasping
+    % Tce_s: configuration of the end-effector above the object before and after grasping it
+    % k: number of trajectory reference configurations per .01 seconds
+
+    % OUPUT:
+    % This function will output a .csv file with the entire reference
+    % trajectory represented as N = t*k/0.01 configurations.  Each row in
+    % the .csv file will correspond to one configuration, Tse, per instant in
+    % time where each variable is expressed as follows: r11, r12, r13, r21,
+    % r22, r23, r31, r32, r33, px, py, pz, gripper_state, where the gripper
+    % state = 0 for open and 1 for closed.
+
+    % addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")
+    N = k/0.01; % AT: EDITED time step; also, do we want to include time, t, as an input or nah?
+    
+    % Define end effector configurations for each waypoint
+    Tse_gi = Tsc_i*Tce_g; % grasp initial configuration
+    Tse_gf = Tsc_f*Tce_g; % grasp final configuration
+    Tse_si = Tsc_i*Tce_s; % standoff initial configuration
+    Tse_sf = Tsc_f*Tce_s; % standoff final configuration
+
+    % Define trajectory segments
+    Traj1 = ScrewTrajectory(Tse_i,Tse_si,1,N,3);  % Initial      to     Standby-1
+    Traj2 = ScrewTrajectory(Tse_si,Tse_gi,1,N,3); % Standby-1    to     Cube-Initial
+    Traj3 = ScrewTrajectory(Tse_gi,Tse_gi,1,63,3); % Cube-Initial to     Cube-Initial
+    Traj4 = ScrewTrajectory(Tse_gi,Tse_si,1,N,3); % Cube-Initial to     Standby-1
+    Traj5 = ScrewTrajectory(Tse_si,Tse_sf,1,N,3); % Standby-1    to     Standby-2
+    Traj6 = ScrewTrajectory(Tse_sf,Tse_gf,1,N,3); % Standby-2    to     Cube-Final
+    Traj7 = ScrewTrajectory(Tse_gf,Tse_gf,1,63,3); % Cube-Final   to     Cube-Final
+    Traj8 = ScrewTrajectory(Tse_gf,Tse_sf,1,N,3); % Cube-Final   to     Standby-2
+    
+    % Reformat data for CopeliaSym
+    for i = 1:N
+        T1(i,:) = [Traj1{i}(1,1:3),Traj1{i}(2,1:3),Traj1{i}(3,1:3),Traj1{i}(1:3,4)',0]; 
+        T2(i,:) = [Traj2{i}(1,1:3),Traj2{i}(2,1:3),Traj2{i}(3,1:3),Traj2{i}(1:3,4)',0];  
+        T4(i,:) = [Traj4{i}(1,1:3),Traj4{i}(2,1:3),Traj4{i}(3,1:3),Traj4{i}(1:3,4)',1]; 
+        T5(i,:) = [Traj5{i}(1,1:3),Traj5{i}(2,1:3),Traj5{i}(3,1:3),Traj5{i}(1:3,4)',1]; 
+        T6(i,:) = [Traj6{i}(1,1:3),Traj6{i}(2,1:3),Traj6{i}(3,1:3),Traj6{i}(1:3,4)',1];
+        T8(i,:) = [Traj8{i}(1,1:3),Traj8{i}(2,1:3),Traj8{i}(3,1:3),Traj8{i}(1:3,4)',0]; 
+    end
+
+    for i = 1:63
+        T3(i,:) = [Traj3{i}(1,1:3),Traj3{i}(2,1:3),Traj3{i}(3,1:3),Traj3{i}(1:3,4)',1];
+        T7(i,:) = [Traj7{i}(1,1:3),Traj7{i}(2,1:3),Traj7{i}(3,1:3),Traj7{i}(1:3,4)',0]; 
+    end
+
+% Concatanate trajectory segments
+trajectory = [T1;T2;T3;T4;T5;T6;T7;T8];
+
+end
+
+
+
+
+##### SOURCE END #####
+-->
+</body>
+</html>

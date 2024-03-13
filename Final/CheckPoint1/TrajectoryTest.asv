@@ -39,9 +39,14 @@ grid on
 run TrajectoryTestAnimation.m
 
 %% Link to Coppelia Sim Animation
-disp("https://youtu.be/NrV5SVhy0DQ")
+print("https://youtu.be/NrV5SVhy0DQ")
 
+fig = figure;
 
+uicontrol('Style', 'pushbutton', ...
+          'String', 'Click Me', ...
+          'Position', [100, 100, 100, 30], ...
+          'Callback', 'web(''https://www.example.com'', ''-browser'')');
 
 
 
