@@ -41,7 +41,7 @@ Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
 
 u0 = [0,0,0,0]';
 q0 = [0,0,0]';                    % initial config of {e}
-theta0 = [0,0,0,-pi/2,0]';
+theta0 = [0,0,0,pi/2,0]';
 
 Tse_i = T_se(q0(1),q0(2),q0(3),theta0);     % initial pos of {e}
 
@@ -71,7 +71,6 @@ for i = 1:N-1
 X(:,:,i) = T_se(q(1),q(2),q(3),theta);
 Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
 Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
-
 [Vb,du,dtheta] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt);
 [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
 Q(i,:) = [q;u;theta;0]';
