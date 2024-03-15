@@ -10,7 +10,7 @@ Vd = se3ToVec(brac_Vd);
 
 control_ff = Adjoint(inv(X(end))*Xd)*Vd;
 control_p =  Kp*Xe;
-control_i = Ki*(sum(Xe.*dt,2));
+control_i = Ki*sum(dt*Xe,2);
 
 Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
 
@@ -65,14 +65,17 @@ Jm = JacobianBody(Blist,theta);
 J = [Jbase,Jm];
 Q = pinv(J,1e-3)*Vb
 
-% if(abs(theta) <= pi-0.01)
-%     dtheta = Q(5:end);
-% else
-%     dtheta = [0,0,0,0,0]';
-% end
+% % if(abs(theta) <= pi-0.01)
+% %     dtheta = Q(5:end);
+% % else
+% %     dtheta = [0,0,0,0,0]';
+% % end
 
-dtheta = Q(5:end)';
-du = Q(1:4)';
+% dtheta = Q(5:end);
+% du = Q(1:4);
+
+% du = [0;0;0;0];
+% dtheta = [0;0;0;0;0];
 
 % if(abs(du) >= speedmax)
 %     du = speedmax;
