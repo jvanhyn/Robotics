@@ -30,12 +30,9 @@ X = [...
 
 dt = 0.01;
 
-Kp = zeros(6,6);
-Ki = zeros(6,6);
+Kp = zeros(6);
+Ki = zeros(6);
 
 q = [0, 0, 0, 0, 0, 0.2, -1.6, 0];
 [Vb,du,dtheta] = FeedbackControl(q,X,Xd_i,Xd_f,Kp,Ki,dt);
 
-Vb
-du 
-dtheta

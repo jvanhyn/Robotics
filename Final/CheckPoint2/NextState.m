@@ -21,21 +21,21 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
 % theta: next joint angles (in the set of R^5)
 
     % ensure that wheel speeds are under the speed threshold
-    % for i = 1:4
-    %     if(abs(du(i)) > speed_max)
-    %         du(i) = speed_max;
-    %     end
-    % end
+    for i = 1:4
+        if(abs(du(i)) > speed_max)
+            du(i) = speed_max;
+        end
+    end
 
-   % AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
-   % vel.s)
+%    AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
+%    vel.s)
 
     % ensure that joint speeds are under the speed threshold
-    % for i = 1:5
-    %     if(abs(dtheta(i)) > speed_max)
-    %         dtheta(i) = speed_max;
-    %     end
-    % end
+    for i = 1:5
+        if(abs(dtheta(i)) > speed_max)
+            dtheta(i) = speed_max;
+        end
+    end
     
     % Use Euler's method to approximate new wheel and joint angles
     u = u0 + du.*dt;

@@ -8,18 +8,12 @@ end
 brac_Vd = 1/dt * MatrixLog6(inv(Xd)*Xd1);           % FeedForward Target-TwistFeedForward Target-Twist
 Vd = se3ToVec(brac_Vd);            
 
-control_ff = Adjoint(inv(X(end))*Xd)*Vd;
+control_ff = Adjoint(inv(X(:,:,end))*Xd)*Vd;
 control_p =  Kp*Xe(:,end);
 control_i = Ki*sum(dt*Xe,2);
 
-Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
 
-% % Solutions
-% % check1 = [0;0;0;20;0;10] == round(Vd,3)
-% % check2 = [0;0;0;21.409;0;6.455] == round(AdjVd,3)
-% % check3 = [0;0;0;21.409;0;6.455] == round(Vb,3)
-% % check4 = [0;0.171;0;0.080;0;0.107] == round(Xe,3)
-% % du_dtheta_s = [157.2,157.2,157.2,157.2,0,-652.9,1398.6,-745.7,0];
+Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
 
 
 % % JVH: Here is a proposed method for the control
@@ -67,6 +61,15 @@ Q = pinv(J,1e-3)*Vb;
 
 dtheta = Q(5:end);
 du = Q(1:4);
+
+%% Solutions
+check1 = [0;0;0;20;0;10] - round(Vd,3)
+check2 = [0;0;0;21.409;0;6.455] - round(control_ff,3)
+check3 = [0;0;0;21.409;0;6.455] - round(Vb,3)
+check4 = [0;0.171;0;0.080;0;0.107] - round(Xe(:,end),3)
+check5 = [157.2,157.2,157.2,157.2,0,-652.9,1398.6,-745.7,0]' - [du;dtheta]
+check6 = [0, 0.171, 0, 21.488, 0, 6.562]' - Vb
+check7 = [157.5, 157.5, 157.5, 157.5, 0, -654.3, 1400.9, -746.8, 0]' - [du;dtheta]
 
 
 end
