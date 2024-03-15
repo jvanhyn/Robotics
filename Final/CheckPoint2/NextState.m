@@ -27,8 +27,8 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
         end
     end
 
-   % AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
-   % vel.s)
+%    AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
+%    vel.s)
 
     % ensure that joint speeds are under the speed threshold
     for i = 1:5
