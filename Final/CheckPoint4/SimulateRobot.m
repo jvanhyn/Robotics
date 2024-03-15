@@ -61,11 +61,11 @@ q = q0;
 theta = theta0;
 u = u0;
 
-Kp = 100*eye(6);
-Ki = zeros(6);
+Kp = 3*eye(6);
+Ki = 0.01*eye(6);
 
 N = length(trajectory(:,1));
-Q = zeros(N,8);
+Q = zeros(N,13);
 
 for i = 1:N-1
 X(:,:,i) = T_se(q(1),q(2),q(3),theta);
@@ -74,30 +74,7 @@ Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+
 
 [Vb,du,dtheta] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt);
 [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
+Q(i,:) = [q;u;theta;0]';
 end
 
-% writematrix(Q,'robotmotion.csv')
-
-% for i = 1:N-1
-%     P(:,i) = T_se(Q(i,1),Q(i,2),Q(i,3),Q(i,4:end))*[0;0;0;1];
-% end
-
-% figure()
-% plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
-% title("Trajectory Overview")
-% view(50,20)
-% grid on
-% hold on
-% for i = 1:50
-%     scatter3(P(1,i),P(2,i),P(3,i),'k','filled')
-%     drawnow
-%     pause(0.01)
-%     daspect([1,1,1])
-%     pbaspect([1,1,1])
-
-% end
-% hold off
-
-
-% [trajectory(1,10),trajectory(1,11),trajectory(1,12)]
-% Q(1,:)
+writematrix(Q,'robotmotion.csv')
