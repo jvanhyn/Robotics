@@ -2,14 +2,14 @@ function [Vb,du,dtheta] = FeedbackControl(q,X,Xd,Xd1,Kp,Ki,dt)
 
 for i = 1:length(X(1,1,:))
 brac_Xe(:,:,i) = MatrixLog6((X(:,:,i))\Xd);
-Xe(:,i) = se3ToVec(brac_Xe);                  % Feedback Error-Twist
+Xe(:,i) = se3ToVec(brac_Xe(:,:,i));                  % Feedback Error-Twist
 end                   
 
 brac_Vd = 1/dt * MatrixLog6(inv(Xd)*Xd1);           % FeedForward Target-TwistFeedForward Target-Twist
 Vd = se3ToVec(brac_Vd);            
 
 control_ff = Adjoint(inv(X(end))*Xd)*Vd;
-control_p =  Kp*Xe;
+control_p =  Kp*Xe(:,end);
 control_i = Ki*sum(dt*Xe,2);
 
 Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
@@ -63,22 +63,10 @@ Jbase = Adjoint(inv(T_0e(theta))*inv(T_b0))*F6;
 Jm = JacobianBody(Blist,theta);
 
 J = [Jbase,Jm];
-Q = pinv(J,1e-3)*Vb
+Q = pinv(J,1e-3)*Vb;
 
-% % if(abs(theta) <= pi-0.01)
-% %     dtheta = Q(5:end);
-% % else
-% %     dtheta = [0,0,0,0,0]';
-% % end
+dtheta = Q(5:end);
+du = Q(1:4);
 
-% dtheta = Q(5:end);
-% du = Q(1:4);
-
-% du = [0;0;0;0];
-% dtheta = [0;0;0;0;0];
-
-% if(abs(du) >= speedmax)
-%     du = speedmax;
-% end
 
 end
