@@ -63,7 +63,7 @@ Jbase = Adjoint(inv(T_0e(theta))*inv(T_b0))*F6;
 Jm = JacobianBody(Blist,theta);
 
 J = [Jbase,Jm];
-Q = pinv(J,1e-3)*Vb;
+Q = pinv(J,1e-3)*Vb
 
 % if(abs(theta) <= pi-0.01)
 %     dtheta = Q(5:end);
