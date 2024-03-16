@@ -44,9 +44,9 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
     % Calculate the next state of the chassis configuration using odometry
    % AT: what are l,w,r?
    % JVH: w,l, and r are the dimentions of the mechanum wheels (width,length, radius). 
-    l = 1;
-    w = 1;
-    r = 1;
+    l = 0.47/2;
+    w = 0.3/2;
+    r = 0.0475;
     
     % Calculate the body frame twist of the chassis
     F = r/4 * [-1/(l+w) 1/(l+w) 1/(l+w) -1/(l+w); 1 1 1 1; -1 1 -1 1]; % F for a 4-mecanum-wheel chassis (see eqn 13.33 from mr)

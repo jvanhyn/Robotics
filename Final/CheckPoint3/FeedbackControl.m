@@ -1,4 +1,4 @@
-% function [V,u,dtheta] = FeedbackControl(X,Xd,Xd_next,Kp,Ki,dt)
+% function [V,du,dtheta] = FeedbackControl(X,Xd,Xd_next,Kp,Ki,dt)
 
 % INPUTS:
 % X: actual ee config
@@ -9,7 +9,7 @@
 
 % OUTPUts:
 % V: commanded ee twist
-% u: commanded wheel speeds
+% du: commanded wheel speeds
 % dtheta: commanded joint speeds
 
 %brac_Xerr = matrixLog6(Xd\X); % matrix representation of error twist
@@ -26,10 +26,10 @@ brac_Xe(:,:,i) = MatrixLog6((X(:,:,i))\Xd);
 Xe(:,i) = se3ToVec(brac_Xe(:,:,i));                  % Feedback Error-Twist
 end                   
 
-brac_Vd = 1/dt * MatrixLog6(inv(Xd)*Xd1);           % FeedForward Target-TwistFeedForward Target-Twist
+brac_Vd = 1/dt * MatrixLog6(Xd\Xd1);           % FeedForward Target-Twist
 Vd = se3ToVec(brac_Vd);            
 
-control_ff = Adjoint(inv(X(:,:,end))*Xd)*Vd;
+control_ff = Adjoint(X(:,:,end)\Xd)*Vd;
 control_p =  Kp*Xe(:,end);
 control_i = Ki*sum(dt*Xe,2);
 
@@ -51,8 +51,8 @@ Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
 % %}
 
 % Default configurations
-M_0e =  [1 0 0 0.1667; 0 1 0 0; 0 0 1 0.6546; 0 0 0 1]; % default end effector configuration
-T_b0 =  [1 0 0 0.1667; 0 1 0 0; 0 0 1 0.0330; 0 0 0 1]; % manipulator base to body frame transformation
+M_0e =  [1 0 0 0.033; 0 1 0 0; 0 0 1 0.6546; 0 0 0 1]; % default end effector configuration
+T_b0 =  [1 0 0 0.1662; 0 1 0 0; 0 0 1 0.0026; 0 0 0 1]; % manipulator base to body frame transformation
 
 % Manipulator screw axes
 B1 = [0,  0,  1,  0,      0.0330,  0]';
