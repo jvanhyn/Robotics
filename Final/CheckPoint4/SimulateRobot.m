@@ -42,7 +42,8 @@ Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
 
 u0 = [0,0,0,0]'; % initial chassis wheel speed or position?
 q0 = [0,0,0]';                    % initial config of {e} %AT: wrt {e}?
-theta0 = [0,0,0,pi/2,0]'; % initial robot arm joint angles (how did you choose these)
+%theta0 = [0,0,0,pi/2,0]'; % initial robot arm joint angles (how did you choose these)
+theta0 = [0, pi/2, -.2, -.2, 0];
 
 Tse_i = T_se(q0(1),q0(2),q0(3),theta0);     % initial pos of end effector {e}
 % Tse_i = [0 0 1 0; 0 1 0 0; -1 0 0 .5; 0 0 0 1]; % AT: This is the Tse_i
@@ -70,8 +71,8 @@ speed_max = inf;
 
 % AT: try starting with some initial error to see how it performs with only
 % feedforward control --> didn't change much
-%q = q0;
-q = [q0(1)-.01, q0(2)-.01, q0(3)]'; 
+q = q0;
+%q = [q0(1)-.01, q0(2)-.01, q0(3)]'; 
 theta = theta0;
 u = u0;
 
@@ -83,15 +84,30 @@ Ki = zeros(6);
 
 N = length(trajectory(:,1));
 Q = zeros(N,13);
+Xerr = zeros(N,6);
 
+eomg = .1; %error tolerances
+ev = .1;
+theta_logical_val = testJointLimits(theta);
 
 for i = 1:N-1
+    % % check if theta satisfies the joint limits for each iteration
+    % j = 0;
+    % maxiterations = 20;
+    % while ~any(theta_logical_val) == false && j < maxiterations
+    %     [theta, success] = IKinBody(Blist, M_0e, Xd1, theta, eomg, ev) %should it be Xd or Xd_n?
+    %     j = j+1;
+    %     theta_logical_val = testJointLimits(theta);
+    % end
 X(:,:,i) = T_se(q(1),q(2),q(3),theta);
 Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1]; % current trajectory transformation matrix
 Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1]; % next trajectory transformation matrix
-[Vb,du,dtheta] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt);
+%[Vb,du,dtheta,Xe] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt); % q is the current location og the chassis
+[Vb,du,dtheta,Xe] = FeedbackControl(theta,X,Xd,Xd_n,Kp,Ki,dt);
 [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
-Q(i,:) = [q;u;theta;0]';
+Q(i,:) = [q;u;theta;0]'; % store values of Q, the current configuration of the robot
+Xerr(i,:) = [Xe]'; 
 end
 
 writematrix(Q,'robotmotion.csv')
+writematrix(Xerr,'Xerr.csv')
