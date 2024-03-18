@@ -33,7 +33,7 @@ Blist = [B1,B2,B3,B4,B5];
 %% Initial conditions
 q0 = [0,0,0]';                      % position of chasis         
 u0 = [0,0,0,0]';                    % wheel angles
-theta0 = [0,pi/4,-pi/4,-pi/2,0]';              % manipulator arm angles
+theta0 = [0,0,0,-pi/2,0]';              % manipulator arm angles
 
 Tsb = [cos(q0(1)) -sin(q0(1)) 0 q0(2); sin(q0(1))  cos(q0(1)) 0 q0(3); 0 0 1 0.0963; 0 0 0 1]; % Body to Spacial frame transformation
 T0e = FKinBody(M0e,Blist,theta0); % End-effector to manipulator base transformation
@@ -41,14 +41,14 @@ Tse = Tsb * Tb0 * T0e;
 
 Tse_i = Tse;
 Tsc_i = Tz( 1,  0,  0,     0);     % initial configuration of the cube
-Tsc_f = Tz( 0, -1,  0,     -pi/2);     % final configuration of the cube
+%Tsc_f = Tz( 0, -1,  0,     pi/2);     % final configuration of the cube
 
-Tce_g = Ty( 0, 0,  0.1, pi/2);        % grasp config of the ee wrt {c}
-Tce_s = Ty( 0, 0, .3,  pi/2);        % standoff config of the ee wrt {c}
-% Tsc_f = Tz( 0, -1,  0,    0);     % final configuration of the cube
-% 
-% Tce_g = Ty( 0, 0,  0.1, 0);        % grasp config of the ee wrt {c}
-% Tce_s = Ty( 0, 0, .3,  0);        % standoff config of the ee wrt {c}
+%Tce_g = Ty( 0, 0,  0.1, pi/2);        % grasp config of the ee wrt {c}
+%Tce_s = Ty( 0, 0, .3,  pi/2);        % standoff config of the ee wrt {c}
+Tsc_f = Tz( 0, -1,  0,    0);     % final configuration of the cube
+
+Tce_g = Ty( 0, 0,  0.1, 0);        % grasp config of the ee wrt {c}
+Tce_s = Ty( 0, 0, .3,  0);        % standoff config of the ee wrt {c}
 
 % %% Trajectory Generation
 k = 10;

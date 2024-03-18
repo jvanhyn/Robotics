@@ -35,7 +35,7 @@ r = 0.0475;
 
 F6 = r/4 * [0 0 0 0; 0 0 0 0; -1/(l+w) 1/(l+w) 1/(l+w) -1/(l+w); 1 1 1 1; -1 1 -1 1; 0 0 0 0]; % F for a 4-mecanum-wheel chassis (see eqn 13.33 from mr)
 
-Jbase = Adjoint(inv(T0e)*inv(Tb0))*F6;
+Jbase = Adjoint(inv(inv(T0e)*inv(Tb0)))*F6;
 Jm = JacobianBody(Blist,theta);
 
 J = [Jbase,Jm];

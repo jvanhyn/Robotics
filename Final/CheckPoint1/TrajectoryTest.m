@@ -29,15 +29,15 @@ trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 
 writematrix(trajectory,"trajectory.csv")
 
-%% Plot the Trajectory
-fig1 = figure(1);
-plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
-title("Trajectory Overview")
-view(50,20)
-grid on
-
-%% Animate the Trajectory
-run TrajectoryTestAnimation.m
+% %% Plot the Trajectory
+% fig1 = figure(1);
+% plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
+% title("Trajectory Overview")
+% view(50,20)
+% grid on
+% 
+% %% Animate the Trajectory
+% run TrajectoryTestAnimation.m
 
 
 
