@@ -1,4 +1,4 @@
-function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
+function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k,dt)
     % TrajectoryGenerator creates the reference trajectory intended for the
     % end-effector to follow.
 
@@ -18,8 +18,7 @@ function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
     % r22, r23, r31, r32, r33, px, py, pz, gripper_state, where the gripper
     % state = 0 for open and 1 for closed.
 
-    % addpath("/Users/jvanhyn/Documents/GitHub/Robotics/mr")
-    N = k/0.01; % Steps
+    N = k/dt; % Steps
     
     % Define end effector configurations for each waypoint
     Tse_gi = Tsc_i*Tce_g; % grasp initial configuration

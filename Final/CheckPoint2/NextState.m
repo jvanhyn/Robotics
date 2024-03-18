@@ -13,7 +13,7 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
 % dtheta: wheel velocities (in the set of R^4)
 
 % dt: timestep
-% dspeed_max: speed threshold (applies to both wheel and joint speeds)
+% speed_max: maximum motor speed vector (dtheta1_max,dtheta2_max,dtheta3_max,dtheta4_max,dtheta5_max,du_max)
 
 % OUTPUTS: configuration of the next state
 % q: next location of the chassis (in the set of R^3)
@@ -22,14 +22,14 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
 
     % ensure that wheel speeds are under the speed threshold
     for i = 1:4
-        if(abs(du(i)) > speed_max)
+        if(abs(du(i)) > speed_max(6))
             du(i) = speed_max;
         end
     end
 
     % ensure that joint speeds are under the speed threshold
     for i = 1:5
-        if(abs(dtheta(i)) > speed_max)
+        if(abs(dtheta(i)) > speed_max(i))
             dtheta(i) = speedmax;
         end
     end

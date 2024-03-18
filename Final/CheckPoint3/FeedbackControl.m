@@ -1,6 +1,22 @@
-function [Vb,du,dtheta] = FeedbackControl(q,theta,Tse,Tsd,Tsdn,Kp,Ki,dt)
-R = norm(Tsd(1:3,4));
-Ted = Tse\Tsd;
+function [Vb,du,dtheta] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,dt)
+% FeedbackControl uses target trajectory to generate commaned joint velocites.
+
+% INPUTS:
+% theta: current joint angles (in the set of R^5)
+
+% Tse: current spacial configuration of the robot        (in the set of SE(3))
+% Td:  desired spacial configuration of the robot        (in the set of SE(3))
+% Tdn: desired future spacial configuration of the robot (in the set of SE(3))
+
+% Kp: proportial control gain  (in the set of R^6x6)
+% Ki: proportial integral gain (in the set of R^6x6)
+
+% OUTPUTS: configuration of the next state
+% Vb: commanded body twist                      (in the set of R^6)
+% du: commanded wheel velocities                (in the set of R^4)
+% theta: commanded manioulator joint velocities (in the set of R^5)
+
+Ted = Tse\Tsd; % 
 Tddn = Tsd\Tsdn;
 
 brac_Verr = MatrixLog6(Ted);
@@ -10,7 +26,7 @@ brac_Vd = 1/dt * MatrixLog6(Tddn);           % FeedForward Target-TwistFeedForwa
 Vd = se3ToVec(brac_Vd);            
 
 control_ff = Adjoint(Ted)*Vd;
-control_p = zeros(6,1);
+control_p = Kp*Verr;
 control_i = zeros(6,1);
 
 Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
@@ -28,15 +44,14 @@ B5 = [0,  0,  1,       0,      0,  0]';
 Blist = [B1,B2,B3,B4,B5];
 
 T0e = FKinBody(M0e,Blist,theta); % End-effector to manipulator base transformation
+Jm = JacobianBody(Blist,theta);
 
 l = 0.47/2;
 w = 0.3/2;
 r = 0.0475;
 
 F6 = r/4 * [0 0 0 0; 0 0 0 0; -1/(l+w) 1/(l+w) 1/(l+w) -1/(l+w); 1 1 1 1; -1 1 -1 1; 0 0 0 0]; % F for a 4-mecanum-wheel chassis (see eqn 13.33 from mr)
-
 Jbase = Adjoint(inv(T0e)*inv(Tb0))*F6;
-Jm = JacobianBody(Blist,theta);
 
 J = [Jbase,Jm];
 Q = pinv(J,1e-3)*Vb;
