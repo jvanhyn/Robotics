@@ -20,10 +20,10 @@ Tse_i = Ty(.3334, 0, .7839, pi/2);  % initial configuration of the end effector
 Tsc_i = Tz( 1,  0,  0,     0);      % initial configuration of the cube
 Tsc_f = Tz( 0, -1,  0, -pi/2);      % final configuration of the cube
 
-Tce_g =  Ty( 0, 0,   0, pi);        % grasp config of the ee wrt {c}
-Tce_s = Ty(0,0,.25,pi);             % standoff config of the ee wrt {c}
+Tce_g = Ty( 0, 0,   0, pi);        % grasp config of the ee wrt {c}
+Tce_s = Ty( 0, 0, .25, pi);             % standoff config of the ee wrt {c}
 
-k = 1;
+k = 10;
 
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 

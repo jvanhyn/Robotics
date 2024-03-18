@@ -28,14 +28,14 @@ function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k)
     Tse_sf = Tsc_f*Tce_s; % standoff final configuration
 
     % Define trajectory segments
-    Traj1 = ScrewTrajectory(Tse_i,Tse_si,1,N,3);    % Initial      to     Standby-1
-    Traj2 = ScrewTrajectory(Tse_si,Tse_gi,1,N,3);   % Standby-1    to     Cube-Initial
-    Traj3 = ScrewTrajectory(Tse_gi,Tse_gi,1,63,3);  % Cube-Initial to     Cube-Initial
-    Traj4 = ScrewTrajectory(Tse_gi,Tse_si,1,N,3);   % Cube-Initial to     Standby-1
-    Traj5 = ScrewTrajectory(Tse_si,Tse_sf,1,N,3);   % Standby-1    to     Standby-2
-    Traj6 = ScrewTrajectory(Tse_sf,Tse_gf,1,N,3);   % Standby-2    to     Cube-Final
-    Traj7 = ScrewTrajectory(Tse_gf,Tse_gf,1,63,3);  % Cube-Final   to     Cube-Final
-    Traj8 = ScrewTrajectory(Tse_gf,Tse_sf,1,N,3);   % Cube-Final   to     Standby-2
+    Traj1 = CartesianTrajectory(Tse_i,Tse_si,1,N,3);    % Initial      to     Standby-1
+    Traj2 = CartesianTrajectory(Tse_si,Tse_gi,1,N,3);   % Standby-1    to     Cube-Initial
+    Traj3 = CartesianTrajectory(Tse_gi,Tse_gi,1,63,3);  % Cube-Initial to     Cube-Initial
+    Traj4 = CartesianTrajectory(Tse_gi,Tse_si,1,N,3);   % Cube-Initial to     Standby-1
+    Traj5 = CartesianTrajectory(Tse_si,Tse_sf,1,N,3);   % Standby-1    to     Standby-2
+    Traj6 = CartesianTrajectory(Tse_sf,Tse_gf,1,N,3);   % Standby-2    to     Cube-Final
+    Traj7 = CartesianTrajectory(Tse_gf,Tse_gf,1,63,3);  % Cube-Final   to     Cube-Final
+    Traj8 = CartesianTrajectory(Tse_gf,Tse_sf,1,N,3);   % Cube-Final   to     Standby-2
     
     % Reformat data for CopeliaSym
     for i = 1:N

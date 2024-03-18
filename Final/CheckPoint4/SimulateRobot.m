@@ -1,4 +1,4 @@
-clear; clc;
+close all; clear; clc;
 
 addpath(cd,'../mr')
 addpath(cd,'../CheckPoint1')
@@ -33,60 +33,63 @@ Blist = [B1,B2,B3,B4,B5];
 %% Initial conditions
 q0 = [0,0,0]';                      % position of chasis         
 u0 = [0,0,0,0]';                    % wheel angles
-theta0 = [0,0,0,-pi/2,0]';           % manipulator arm angles
+theta0 = [0,0,0,-pi/2,0]';              % manipulator arm angles
 
-T0e = FKinBody(M0e,Blist,theta0); % End-effector to manipulator base transformation
-Tsb = [cos(q0(3)) -sin(q0(3)) 0 q0(1); sin(q0(3))  cos(q0(3)) 0 q0(2); 0 0 1 0.0963; 0 0 0 1]; % Body to Spacial frame transformation
+Tsb = [cos(q0(1)) -sin(q0(1)) 0 q0(2); sin(q0(1))  cos(q0(1)) 0 q0(3); 0 0 1 0.0963; 0 0 0 1]; % Body to Spacial frame transformation
+T0e = FKinBody(M0e,Blist,theta0) % End-effector to manipulator base transformation
 
-Tse_i = Tsb * Tb0 * T0e;            % End-effector initial position
-Tsc_i = Tz( 1,  0,  0,       0);    % initial configuration of the cube
-Tsc_f = Tz( 0, -1,  0,   -pi/2);    % final configuration of the cube
-Tce_g = Ty( 0,  0,  0,     pi);    % grasp config of the ee wrt {c}
-Tce_s = Ty( 0,  0,  .25,   -pi);    % standoff config of the ee wrt {c}
+Tse_i = Tsb*Tb0*T0e;
 
-%% Trajectory Generation
-k = 10;
+Tsc_i = Tz( 1,  0,  0,     0);      % initial configuration of the cube
+Tsc_f = Tz( 0, -1,  0, -pi/2);      % final configuration of the cube
+
+Tce_g = Ty( 0, 0,  0, pi);        % grasp config of the ee wrt {c}
+Tce_s = Ty( 0, 0, .5, pi);        % standoff config of the ee wrt {c}
+
+% %% Trajectory Generation
+k = 1;
 dt = 0.01;
 speed_max = 550;
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 
 %% Plot the Trajectory
 
-hold on
 plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
+hold on
+
 title("Trajectory Overview")
-view(50,20)
 grid on
+hold off
 
-%% Control Gains
-Kp = 3*eye(6);
-Ki = 0.01*eye(6);
+% %% Control Gains
+% Kp = 3*eye(6);
+% Ki = 0.01*eye(6);
 
-%% Integration Variables
-q = q0;
-u = u0;
-theta = theta0;
+% %% Integration Variables
+% q = q0;
+% u = u0;
+% theta = theta0;
 
-%% Running The Simulation
-N = length(trajectory(:,1));
-Q = zeros(N,13);
+% %% Running The Simulation
+% N = length(trajectory(:,1));
+% Q = zeros(N,13);
 
-for i = 1:N-1
-% End-effector to manipulator base transformation
-T_0e = FKinBody(M0e,Blist,theta');
+% for i = 1:N-1
+% % End-effector to manipulator base transformation
+% T_0e = FKinBody(M0e,Blist,theta');
 
-% Body to Spacial frame transformation
-T_sb = [cos(q(3)) -sin(q(3)) 0 q(1); sin(q(3))  cos(q(3)) 0 q(2); 0 0 1 0.0963; 0 0 0 1];
+% % Body to Spacial frame transformation
+% T_sb = [cos(q(3)) -sin(q(3)) 0 q(1); sin(q(3))  cos(q(3)) 0 q(2); 0 0 1 0.0963; 0 0 0 1];
 
-% End-effector to space transformation
-Tse = Tsb * Tb0 * T0e;
+% % End-effector to space transformation
+% Tse = Tsb * Tb0 * T0e;
 
-% X(:,:,i) = T_se(q(1),q(2),q(3),theta);
-% Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
-% Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
-% [Vb,du,dtheta] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt);
-% [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
-% Q(i,:) = [q;u;theta;0]';
-end
+% % X(:,:,i) = T_se(q(1),q(2),q(3),theta);
+% % Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
+% % Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
+% % [Vb,du,dtheta] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt);
+% % [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
+% % Q(i,:) = [q;u;theta;0]';
+% end
 
-writematrix(Q,'robotmotion.csv')
+% writematrix(Q,'robotmotion.csv')
