@@ -1,4 +1,4 @@
-close all; clear; clc;
+close all; clear all; clc;
 
 addpath(cd,'../mr')
 addpath(cd,'../CheckPoint1')
@@ -31,9 +31,9 @@ T_se = @(phi,x,y,q) T_sb(phi,x,y) * T_b0 * T_0e(q);
 
 % Rotation matrix helper functions
 Tz = @(x,y,z,phi) [cos(phi)  -sin(phi) 0 x;
-                  sin(phi)   cos(phi) 0 y;
-                  0          0        1 z;
-                  0          0        0 1];
+                  sin(phi)   cos(phi)  0 y;
+                  0          0         1 z;
+                  0          0         0 1];
 Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
                    0         1      0   y;
                    -sin(phi) 0 cos(phi) z;
@@ -42,8 +42,8 @@ Ty = @(x,y,z,phi) [cos(phi)  0 sin(phi) x;
 
 u0 = [0,0,0,0]'; % initial chassis wheel speed or position?
 q0 = [0,0,0]';                    % initial config of {e} %AT: wrt {e}?
-%theta0 = [0,0,0,pi/2,0]'; % initial robot arm joint angles (how did you choose these)
-theta0 = [0, pi/2, -.2, -.2, 0];
+theta0 = [0,0,0,-pi/2,0]'; % initial robot arm joint angles (how did you choose these)
+%theta0 = [0, pi/2, -.2, -.2, 0];
 
 Tse_i = T_se(q0(1),q0(2),q0(3),theta0);     % initial pos of end effector {e}
 % Tse_i = [0 0 1 0; 0 1 0 0; -1 0 0 .5; 0 0 0 1]; % AT: This is the Tse_i
@@ -86,9 +86,9 @@ N = length(trajectory(:,1));
 Q = zeros(N,13);
 Xerr = zeros(N,6);
 
-eomg = .1; %error tolerances
-ev = .1;
-theta_logical_val = testJointLimits(theta);
+% eomg = .1; %error tolerances
+% ev = .1;
+% theta_logical_val = testJointLimits(theta);
 
 for i = 1:N-1
     % % check if theta satisfies the joint limits for each iteration
