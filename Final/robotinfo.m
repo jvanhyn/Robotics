@@ -3,8 +3,8 @@ close all; clear; clc;
 %% File for storing robot parameters
 
 % Default Configurations 
-M_0e =  [1 0 0 0.1667; 0 1 0 0; 0 0 1 0.6546; 0 0 0 1]; % default end effector configuration
-T_b0 =  [1 0 0 0.1667; 0 1 0 0; 0 0 1 0.0330; 0 0 0 1]; % manipulator base to body frame transformation
+M_0e =  [1 0 0 0.0330; 0 1 0 0; 0 0 1 0.6546; 0 0 0 1]; % default end effector configuration
+T_b0 =  [1 0 0 0.1667; 0 1 0 0; 0 0 1 0.0026; 0 0 0 1]; % manipulator base to body frame transformation
 
 % Body to Spacial frame transformation
 T_sb = @(phi,x,y) [cos(phi)  -sin(phi)  0    x;
