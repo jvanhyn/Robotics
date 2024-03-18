@@ -43,12 +43,8 @@ Tse_i = Tse;
 Tsc_i = Tz( 1,  0,  0,     0);     % initial configuration of the cube
 Tsc_f = Tz( 0, -1,  0,     -pi/2);     % final configuration of the cube
 
-Tce_g = Ty( 0, 0,  0.1, pi/2);        % grasp config of the ee wrt {c}
+Tce_g = Ty( .01, 0,  0.02, pi/2);        % grasp config of the ee wrt {c}
 Tce_s = Ty( 0, 0, .3,  pi/2);        % standoff config of the ee wrt {c}
-% Tsc_f = Tz( 0, -1,  0,    0);     % final configuration of the cube
-% 
-% Tce_g = Ty( 0, 0,  0.1, 0);        % grasp config of the ee wrt {c}
-% Tce_s = Ty( 0, 0, .3,  0);        % standoff config of the ee wrt {c}
 
 % %% Trajectory Generation
 k = 10;
@@ -57,7 +53,7 @@ speed_max = 200;
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 
 %% Control Gains
-Kp = zeros(6);
+Kp = eye(6);
 Ki = zeros(6);
 
 %% Integration Variables

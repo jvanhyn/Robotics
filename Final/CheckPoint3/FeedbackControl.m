@@ -35,6 +35,24 @@ r = 0.0475;
 
 F6 = r/4 * [0 0 0 0; 0 0 0 0; -1/(l+w) 1/(l+w) 1/(l+w) -1/(l+w); 1 1 1 1; -1 1 -1 1; 0 0 0 0]; % F for a 4-mecanum-wheel chassis (see eqn 13.33 from mr)
 
+% Joint Limits as Singularity Control
+if abs(theta(1)) > deg2rad(169)
+    theta(1) = deg2rad(169);
+end
+if theta(2) > deg2rad(90) || theta(2) < deg2rad(-65)
+    theta(2) = deg2rad(90);
+end
+
+if theta(3) > deg2rad(146) || theta(3) < deg2rad(-150)
+    theta(3) = deg2rad(146);
+end
+if abs(theta(4)) > deg2rad(102.5)
+    theta(4) = deg2rad(102.5);
+end
+if abs(theta(5)) > deg2rad(167.5)
+    theta(5) = deg2rad(167.5);
+end
+
 Jbase = Adjoint(inv(T0e)*inv(Tb0))*F6;
 Jm = JacobianBody(Blist,theta);
 
@@ -43,6 +61,9 @@ Q = pinv(J,1e-3)*Vb;
 dtheta = Q(5:end);
 du = Q(1:4);
 
+
+
+% Singularity check
 % if rank(Jm,1e-3) < 5
 %     dtheta = zeros(5,1);
 % end
