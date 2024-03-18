@@ -33,63 +33,85 @@ Blist = [B1,B2,B3,B4,B5];
 %% Initial conditions
 q0 = [0,0,0]';                      % position of chasis         
 u0 = [0,0,0,0]';                    % wheel angles
-theta0 = [0,0,0,-pi/2,0]';              % manipulator arm angles
+theta0 = [0,-pi/4,pi/4,0,0]';              % manipulator arm angles
 
 Tsb = [cos(q0(1)) -sin(q0(1)) 0 q0(2); sin(q0(1))  cos(q0(1)) 0 q0(3); 0 0 1 0.0963; 0 0 0 1]; % Body to Spacial frame transformation
-T0e = FKinBody(M0e,Blist,theta0) % End-effector to manipulator base transformation
+T0e = FKinBody(M0e,Blist,theta0); % End-effector to manipulator base transformation
+Tse = Tsb * Tb0 * T0e;
 
-Tse_i = Tsb*Tb0*T0e;
+Tse_i = Tse;
+Tsc_i = Tz( 1,  0,  0,     0);     % initial configuration of the cube
+Tsc_f = Tz( 0, -1,  0,     pi/2);     % final configuration of the cube
 
-Tsc_i = Tz( 1,  0,  0,     0);      % initial configuration of the cube
-Tsc_f = Tz( 0, -1,  0, -pi/2);      % final configuration of the cube
-
-Tce_g = Ty( 0, 0,  0, pi);        % grasp config of the ee wrt {c}
-Tce_s = Ty( 0, 0, .5, pi);        % standoff config of the ee wrt {c}
+Tce_g = Ty( 0, 0,  0.1, pi/2);        % grasp config of the ee wrt {c}
+Tce_s = Ty( 0, 0, .3,  pi/2);        % standoff config of the ee wrt {c}
 
 % %% Trajectory Generation
-k = 1;
+k = 10;
 dt = 0.01;
-speed_max = 550;
+speed_max = 200;
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 
-%% Plot the Trajectory
+%% Control Gains
+Kp = zeros(6);
+Ki = zeros(6);
 
-plot3(trajectory(:,10),trajectory(:,11),trajectory(:,12))
-hold on
+%% Integration Variables
+q = q0;
+u = u0;
+theta = theta0;
 
-title("Trajectory Overview")
-grid on
-hold off
+%% Running The Simulation
+N = length(trajectory(:,1));
+Q = zeros(N,13);
 
-% %% Control Gains
-% Kp = 3*eye(6);
-% Ki = 0.01*eye(6);
+Xd = Tse_i;
+for i = 1:N-1
+T0e = FKinBody(M0e,Blist,theta);
+Tsb = [cos(q(1)) -sin(q(1)) 0 q(2); sin(q(1))  cos(q(1)) 0 q(3); 0 0 1 0.0963; 0 0 0 1]; % Body to Spacial frame transformation
+Tse = Tsb * Tb0 * T0e;
+x(i) = Tse(1,4);
+y(i) = Tse(2,4);
+z(i) = Tse(3,4);
+Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
+Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
+[Vb(:,i),du(:,i),dtheta(:,i)] = FeedbackControl(q,theta,Tse,Xd,Xd_n,Kp,Ki,dt);
+du(:,i);
+Vs(:,i) = Adjoint(Tse)*Vb(:,i);
+[q,theta,u] = NextState(q,u,theta,du(:,i),dtheta(:,i),dt,speed_max);
 
-% %% Integration Variables
-% q = q0;
-% u = u0;
-% theta = theta0;
-
-% %% Running The Simulation
-% N = length(trajectory(:,1));
-% Q = zeros(N,13);
-
-% for i = 1:N-1
-% % End-effector to manipulator base transformation
-% T_0e = FKinBody(M0e,Blist,theta');
-
-% % Body to Spacial frame transformation
-% T_sb = [cos(q(3)) -sin(q(3)) 0 q(1); sin(q(3))  cos(q(3)) 0 q(2); 0 0 1 0.0963; 0 0 0 1];
-
-% % End-effector to space transformation
-% Tse = Tsb * Tb0 * T0e;
-
-% % X(:,:,i) = T_se(q(1),q(2),q(3),theta);
-% % Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
-% % Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
-% % [Vb,du,dtheta] = FeedbackControl([q;theta],X,Xd,Xd_n,Kp,Ki,dt);
-% % [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
-% % Q(i,:) = [q;u;theta;0]';
-% end
+end
 
 % writematrix(Q,'robotmotion.csv')
+
+
+
+xmax = 1;
+ymax = 1;
+zmax = 1;
+figure()
+h = gca;
+for i = 1:N-1
+cla(h)
+hold on
+plot3(h,trajectory(:,10),trajectory(:,11),trajectory(:,12),'LineWidth',2)
+scatter3(h,trajectory(i,10),trajectory(i,11),trajectory(i,12),'filled')
+plot3(h,x(1:i),y(1:i),z(1:i),'g','LineWidth',2)
+scatter3(h,x(i),y(i),z(i),'filled')
+xlim(h,[x(i)-xmax,x(i)+xmax])
+ylim(h,[y(i)-ymax,y(i)+ymax])
+zlim(h,[z(i)-zmax,z(i)+zmax])
+% [SX,SY] = meshgrid(linspace(-2*xmax,2*xmax,11),linspace(-2*ymax,2*ymax,11));
+% s = surf(h,SX,SY,SZ);
+% g = [0.7,0.7,0.7];
+% s.EdgeColor = g;
+% s.FaceColor = 'w';
+% plot3(h,h.XLim, [0 0], [0 0],'Color',g,'LineWidth',2);
+% plot3(h,[0, 0], h.YLim, [0 0],'Color',g,'LineWidth',2);
+% plot3(h,[0, 0], [0 0], [0,h.ZLim(2)],'Color',g,'LineWidth',2)
+hold off
+fig2.Color = 'w';
+view(3)
+drawnow
+pause(0.01)
+end

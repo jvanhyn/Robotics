@@ -21,7 +21,7 @@ Tsc_i = Tz( 1,  0,  0,     0);      % initial configuration of the cube
 Tsc_f = Tz( 0, -1,  0, -pi/2);      % final configuration of the cube
 
 Tce_g = Ty( 0, 0,   0, pi);        % grasp config of the ee wrt {c}
-Tce_s = Ty( 0, 0, .25, pi);             % standoff config of the ee wrt {c}
+Tce_s = Ty( 0, 0, .25, pi);        % standoff config of the ee wrt {c}
 
 k = 10;
 
