@@ -53,13 +53,14 @@ speed_max = 200;
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k);
 
 %% Control Gains
-Kp = eye(6);
+Kp = zeros(6);
 Ki = zeros(6);
 
 %% Integration Variables
 q = q0;
 u = u0;
 theta = theta0;
+%theta1 = theta0; %initialization for Joint Limit check in next section
 
 %% Running The Simulation
 N = length(trajectory(:,1));
@@ -67,6 +68,7 @@ Q = zeros(N,13);
 
 Xd = Tse_i;
 for i = 1:N-1
+% would it make sense to implement joint limits here instead of before next state?
 T0e = FKinBody(M0e,Blist,theta);
 Tsb = [cos(q(1)) -sin(q(1)) 0 q(2); sin(q(1))  cos(q(1)) 0 q(3); 0 0 1 0.0963; 0 0 0 1]; % Body to Spacial frame transformation
 Tse = Tsb * Tb0 * T0e;
@@ -78,8 +80,12 @@ Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+
 [Vb(:,i),du(:,i),dtheta(:,i)] = FeedbackControl(q,theta,Tse,Xd,Xd_n,Kp,Ki,dt);
 du(:,i);
 Vs(:,i) = Adjoint(Tse)*Vb(:,i);
-[q,theta,u] = NextState(q,u,theta,du(:,i),dtheta(:,i),dt,speed_max);
-
+[q,theta,u] = NextState(q,u,theta1,du(:,i),dtheta(:,i),dt,speed_max); % parameters of the next state
+% % Add Joint Limits to prevent collisions
+%     while ~any(testJointLimits(theta)) == false
+%         [q,theta,u] = NextState(q,u,theta1,du(:,i),dtheta(:,i),dt,speed_max); % parameters of the next state
+%         theta1 = theta;
+%     end
 Q(i,:) = [q;theta;u;trajectory(i,13)]'; % store values of Q, the current configuration of the robot (
 end
 

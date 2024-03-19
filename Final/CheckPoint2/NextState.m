@@ -38,23 +38,6 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
     u = u0 + du.*dt;
     theta = theta0 + dtheta.*dt;
 
-    % Add Joint Limits to prevent collisions
-    if abs(theta(1)) > deg2rad(169)
-        theta(1) = deg2rad(169)*sign(theta(1));
-    end
-    if theta(2) > deg2rad(90) || theta(2) < deg2rad(-65)
-        theta(2) = deg2rad(90)*sign(theta(2));
-    end
-    
-    if theta(3) > deg2rad(146) || theta(3) < deg2rad(-150)
-        theta(3) = deg2rad(146)*sign(theta(3));
-    end
-    if abs(theta(4)) > deg2rad(102.5)
-        theta(4) = deg2rad(102.5)*sign(theta(4));
-    end
-    if abs(theta(5)) > deg2rad(167.5)
-        theta(5) = deg2rad(167.5)*sign(theta(5));
-    end
 
     % Calculate the next state of the chassis configuration using odometry
    % AT: what are l,w,r?
