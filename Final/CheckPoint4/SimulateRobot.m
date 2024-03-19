@@ -51,6 +51,9 @@ Blist = [B1,B2,B3,B4,B5];
 % Chasis z-height
 zsb = 0.0963;
 
+% Joint Velocity Limmits
+speed_max = 1000*[1,1,1,1,1,1,1,1,1];
+
 %% Initial conditions
 q0 = [0,0,0]';                      % position of body (x,y,phi)         
 u0 = [0,0,0,0]';                    % wheel angles     (R^4)
@@ -76,8 +79,8 @@ k = 10;                             % frames per time step
 trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k,dt);
 
 %% Control Gains
-Kp = eye(6);
-Ki = zeros(6);
+Kp = 100*eye(6);
+Ki = 0.5*eye(6);
 
 %% Running The Simulation
 % Setting the initial conditions
@@ -85,11 +88,11 @@ q = q0;
 u = u0;
 theta = theta0;
 
-speed_max = 1000*[1,1,1,1,1,1,1,1,1];
 % Loop Variables
-N = length(trajectory(:,1)); % total length of the trajectory
-Q = zeros(N,13);             % vector to store the robot configuration
-Xi = zeros(6,1);
+N = length(trajectory(:,1));    % Number of simulation steps
+t = linspace(0,(N-1)*dt,N-1)/k; % Simulation time
+Q = zeros(N,13);                % Robot configuration
+Xi = zeros(6,1);                % Integrated error twist
 
 for i = 1:N-1
 T0e = FKinBody(M0e,Blist,theta);
@@ -99,7 +102,7 @@ Tse = Tsb * Tb0 * T0e;
 Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
 Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
 
-[du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt);
+[du,dtheta,Vb,Xe(:,i),Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt);
 [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
 
 Q(i,:) = [q;theta;u;trajectory(i,13)]'; 
@@ -108,32 +111,29 @@ end
 
 writematrix(Q,'robotmotion.csv')
 
-% xmax = 1;
-% ymax = 1;
-% zmax = 1;
-% figure()
-% h = gca;
-% for i = 1:N-1
-% cla(h)
-% hold on
-% plot3(h,trajectory(:,10),trajectory(:,11),trajectory(:,12),'LineWidth',2)
-% scatter3(h,trajectory(i,10),trajectory(i,11),trajectory(i,12),'filled')
-% plot3(h,x(1:i),y(1:i),z(1:i),'g','LineWidth',2)
-% scatter3(h,x(i),y(i),z(i),'filled')
-% xlim(h,[x(i)-xmax,x(i)+xmax])
-% ylim(h,[y(i)-ymax,y(i)+ymax])
-% zlim(h,[z(i)-zmax,z(i)+zmax])
-% % [SX,SY] = meshgrid(linspace(-2*xmax,2*xmax,11),linspace(-2*ymax,2*ymax,11));
-% % s = surf(h,SX,SY,SZ);
-% % g = [0.7,0.7,0.7];
-% % s.EdgeColor = g;
-% % s.FaceColor = 'w';
-% % plot3(h,h.XLim, [0 0], [0 0],'Color',g,'LineWidth',2);
-% % plot3(h,[0, 0], h.YLim, [0 0],'Color',g,'LineWidth',2);
-% % plot3(h,[0, 0], [0 0], [0,h.ZLim(2)],'Color',g,'LineWidth',2)
-% hold off
-% fig2.Color = 'w';
-% view(3)
-% drawnow
-% pause(0.01)
-%end
+%% Plotting Error
+figure(1)
+set(gcf, 'Position', [10 10 800 400]);
+tgl = tiledlayout(1,2);
+title(tgl,"Error Twist vs. Time")
+subtitle(tgl,"Feed Forward + Kp = 100 + Ki = 0.5")
+
+nexttile(tgl,2)
+plot(t,Xe(4:6,:)',"LineWidth",2)
+legend('vx','vy','vz','Location','northwest')
+title('Linear Velocity')
+xlabel("Time (s)")
+ylabel("Velocity (m/s)")
+lx = xlim;
+ly = ylim;
+grid on
+
+nexttile(tgl,1)
+plot(t,Xe(1:3,:)',"LineWidth",2)
+legend('wx','wy','wz','Location','northwest');
+title('Rotational Velocity')
+xlabel("Time (s)")
+ylabel("Angular Velocity (rad/s)")
+xlim(lx);
+ylim(ly);
+grid on
