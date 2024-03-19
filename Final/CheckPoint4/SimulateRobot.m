@@ -58,8 +58,8 @@ theta0 = [0,pi/4,-pi/4,-pi/2,0]';   % joint angles     (R^5)
 
 %% Generate Trajectory
 Tsb = Tz(q0(2),q0(3),zsb,q0(1));       % Body to Spacial frame transformation
-T0e = FKinBody(M0e,Blist,theta0);   % End-Effector to Base transformation
-Tse = Tsb * Tb0 * T0e;              % End-Effector to Space transformation
+T0e = FKinBody(M0e,Blist,theta0);      % End-Effector to Base transformation
+Tse = Tsb * Tb0 * T0e;                 % End-Effector to Space transformation
 
 % Waypoints
 Tse_i = Tse;                        % initial   configuration of the end-effector   (space frame)
@@ -89,6 +89,7 @@ speed_max = 1000*[1,1,1,1,1,1,1,1,1];
 % Loop Variables
 N = length(trajectory(:,1)); % total length of the trajectory
 Q = zeros(N,13);             % vector to store the robot configuration
+Xi = zeros(6,1);
 
 for i = 1:N-1
 T0e = FKinBody(M0e,Blist,theta);
@@ -98,10 +99,11 @@ Tse = Tsb * Tb0 * T0e;
 Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
 Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
 
-[Vb,du,dtheta] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,dt);
+[du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt);
 [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
 
 Q(i,:) = [q;theta;u;trajectory(i,13)]'; 
+
 end
 
 writematrix(Q,'robotmotion.csv')

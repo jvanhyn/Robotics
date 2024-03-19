@@ -1,4 +1,4 @@
-function [Vb,du,dtheta] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,dt)
+function [du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,Xi,dt)
 % FeedbackControl uses target trajectory to generate commaned joint velocites.
 
 % INPUTS:
@@ -16,20 +16,22 @@ function [Vb,du,dtheta] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,dt)
 % du: commanded wheel velocities                (in the set of R^4)
 % theta: commanded manioulator joint velocities (in the set of R^5)
 
-Ted = Tse\Tsd; % 
-Tddn = Tsd\Tsdn;
+Ted = Tse\Tsd;                      % Transformation from {d} to {e}
+Tddn = Tsd\Tsdn;                    % Transformation from {d} to {dn}
 
-brac_Verr = MatrixLog6(Ted);
-Verr = se3ToVec(brac_Verr);                        % Feedback Error-Twist
+brac_Xe = MatrixLog6(Ted);        % Error Twist Xe as Matrix 
+Xe = se3ToVec(brac_Xe);         % Error Twist Xe      
 
-brac_Vd = 1/dt * MatrixLog6(Tddn);           % FeedForward Target-TwistFeedForward Target-Twist
-Vd = se3ToVec(brac_Vd);            
+brac_Vd = 1/dt * MatrixLog6(Tddn); % Desired Twist Vd as Matrix 
+Vd = se3ToVec(brac_Vd);            % Desired Twist Vd 
 
-control_ff = Adjoint(Ted)*Vd;
-control_p = Kp*Verr;
-control_i = zeros(6,1);
+Xi = Xi + Xe*dt;                   % integrate the error over the next time step
 
-Vb = control_ff + control_p + control_i;   % Commanded Control-Twist
+control_ff = Adjoint(Ted)*Vd;      % Feed Forward control component 
+control_p = Kp*Xe;               % Proportional control component 
+control_i = Ki*Xi;            % Integral control component 
+
+Vb = control_ff + control_p + control_i;  % Commanded control twist
 
 % Default Configurations 
 M0e =  [1 0 0 0.0330; 0 1 0 0; 0 0 1 0.6546; 0 0 0 1]; % default end effector configuration
