@@ -102,7 +102,7 @@ Tse = Tsb * Tb0 * T0e;
 Xd = [trajectory(i,1:3),trajectory(i,10);trajectory(i,4:6),trajectory(i,11);trajectory(i,7:9),trajectory(i,12);0,0,0,1];
 Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
 
-[du,dtheta,Vb,Xe(:,i),Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt);
+[du,dtheta,Vb,Xe(:,i),Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt,[false true false]);
 [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
 
 Q(i,:) = [q;theta;u;trajectory(i,13)]'; 

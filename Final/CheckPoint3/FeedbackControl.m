@@ -1,4 +1,4 @@
-function [du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,Xi,dt)
+function [du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,Xi,dt,control)
 % FeedbackControl uses target trajectory to generate commaned joint velocites.
 
 % INPUTS:
@@ -27,9 +27,9 @@ Vd = se3ToVec(brac_Vd);            % Desired Twist Vd
 
 Xi = Xi + Xe*dt;                   % integrate the error over the next time step
 
-control_ff = Adjoint(Ted)*Vd;      % Feed Forward control component 
-control_p = Kp*Xe;               % Proportional control component 
-control_i = Ki*Xi;            % Integral control component 
+control_ff = control(1)*Adjoint(Ted)*Vd;      % Feed Forward control component 
+control_p = control(2)*Kp*Xe;               % Proportional control component 
+control_i = control(3)*Ki*Xi;            % Integral control component 
 
 Vb = control_ff + control_p + control_i;  % Commanded control twist
 
