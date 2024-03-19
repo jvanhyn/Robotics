@@ -13,7 +13,7 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
 % dtheta: wheel velocities (in the set of R^4)
 
 % dt: timestep
-% dspeed_max: speed threshold (applies to both wheel and joint speeds)
+% speed_max: maximum motor speed vector (dtheta1_max,dtheta2_max,dtheta3_max,dtheta4_max,dtheta5_max,du_max)
 
 % OUTPUTS: configuration of the next state
 % q: next location of the chassis (in the set of R^3)
@@ -22,16 +22,15 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
 
     % ensure that wheel speeds are under the speed threshold
     for i = 1:4
-        if(abs(du(i)) > speed_max)
+        if(abs(du(i)) > speed_max(6))
             du(i) = speed_max;
         end
     end
-% AT: added the following block and renamed du_max to speed_max (I believe we also need to cap the joint
-% vel.s)
+
     % ensure that joint speeds are under the speed threshold
     for i = 1:5
-        if(abs(dtheta(i)) > speed_max)
-            dtheta(i) = speed_max;
+        if(abs(dtheta(i)) > speed_max(i))
+            dtheta(i) = speedmax;
         end
     end
     
@@ -39,11 +38,12 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
     u = u0 + du.*dt;
     theta = theta0 + dtheta.*dt;
 
-  % Calculate the next state of the chassis configuration using odometry
-    % AT: what are l,w,r?
-    l = 1;
-    w = 1;
-    r = 1;
+    % Calculate the next state of the chassis configuration using odometry
+   % AT: what are l,w,r?
+   % JVH: w,l, and r are the dimentions of the mechanum wheels (width,length, radius). 
+   l = 0.47/2;
+   w = 0.3/2;
+   r = 0.0475;
     
     % Calculate the body frame twist of the chassis
     F = r/4 * [-1/(l+w) 1/(l+w) 1/(l+w) -1/(l+w); 1 1 1 1; -1 1 -1 1]; % F for a 4-mecanum-wheel chassis (see eqn 13.33 from mr)
