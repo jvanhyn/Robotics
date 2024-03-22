@@ -71,12 +71,14 @@ Vb = control_ff + control_p + control(3)*control_i;
 Jm = JacobianBody(Blist,theta);
 Jbase = Adjoint(inv(T0e)*inv(Tb0))*F6;
 
+% Enforces Joint Limit
 for i = 1:4
     if(abs(theta(i)) > joint_lims(i))
         Jm(:,i) = zeros(6,1);
     end
 end
 
+% Agregate Jacobian 
 J = [Jbase,Jm];
 
 %% Joint Velocities
@@ -85,6 +87,7 @@ Q = pinv(J,1e-3)*Vb;
 dtheta = Q(5:end);
 du = Q(1:4);
 
+% Backs Joint Away from Limit
 for i = 1:4
     if(abs(theta(i)) > joint_lims(i))
         dtheta(i) = (-0.1)*sign(theta(i));
