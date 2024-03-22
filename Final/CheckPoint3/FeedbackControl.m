@@ -1,4 +1,4 @@
-function [du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,Xi,dt,control)
+function [du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,Xi,dt,control,joint_lims)
 % FeedbackControl uses target trajectory to generate commaned joint velocites.
 
 % INPUTS:
@@ -70,6 +70,13 @@ Vb = control_ff + control_p + control(3)*control_i;
 %% Jacobians
 Jm = JacobianBody(Blist,theta);
 Jbase = Adjoint(inv(T0e)*inv(Tb0))*F6;
+
+for i = 1:4
+    if(abs(theta(i)) > joint_lims(i))
+        Jm(:,i) = zeros(6,1);
+    end
+end
+
 J = [Jbase,Jm];
 
 %% Joint Velocities
@@ -77,5 +84,11 @@ Q = pinv(J,1e-3)*Vb;
 
 dtheta = Q(5:end);
 du = Q(1:4);
+
+for i = 1:4
+    if(abs(theta(i)) > joint_lims(i))
+        dtheta(i) = (-0.1)*sign(theta(i));
+    end
+end
 
 end

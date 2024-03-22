@@ -56,10 +56,10 @@ for i = 1:N-1
     Xd_n = [trajectory(i+1,1:3),trajectory(i+1,10);trajectory(i+1,4:6),trajectory(i+1,11);trajectory(i+1,7:9),trajectory(i+1,12);0,0,0,1];
     
     % Feedback Coontrol
-    [du,dtheta,Vb,Xe(:,i),Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt,control);
+    [du,dtheta,Vb,Xe(:,i),Xi] = FeedbackControl(theta,Tse,Xd,Xd_n,Kp,Ki,Xi,dt,control,joint_lims);
 
     % Simulate over 1 timestep
-    [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max);
+    [q,theta,u] = NextState(q,u,theta,du,dtheta,dt,speed_max,joint_lims);
     
     % Store Solution
     Q(i,:) = [q;theta;u;trajectory(i,13)]';

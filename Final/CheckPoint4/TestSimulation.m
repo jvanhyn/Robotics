@@ -1,24 +1,24 @@
 close all; clear; clc;
 %#ok<*NASGU>
 
-figfile = pwd + "/Figures/";
+figfile = pwd + "/figs/";
 csvfile = pwd + "/csv/";
 
 run best
 run SimulateRobot
 run PlotSimulation
-writematrix(Q, csvfile + "robotmotion1.csv")
+writematrix(Q, csvfile + "best.csv")
 
 
 run overshoot
 run SimulateRobot
 run PlotSimulation
-writematrix(Q, csvfile + "robotmotion2.csv")
+writematrix(Q, csvfile + "overshoot.csv")
 
 run newtask
 run SimulateRobot
 run PlotSimulation
-writematrix(Q, csvfile + "robotmotion3.csv")
+writematrix(Q, csvfile + "newtask.csv")
 
 figure(1)
 saveas(gcf,figfile+"fig1.svg")

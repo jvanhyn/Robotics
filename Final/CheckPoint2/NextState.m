@@ -1,4 +1,4 @@
-function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
+function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max,joint_lims)
 
 % NextState uses the velocity kinematics of a 5R mobile robot and the Euler method
 % of approximation to predict how the robot will move in a small timestep
@@ -37,6 +37,13 @@ function [q,theta,u] = NextState(q0,u0,theta0,du,dtheta,dt,speed_max)
     % Use Euler's method to approximate new wheel and joint angles
     u = u0 + du.*dt;
     theta = theta0 + dtheta.*dt;
+
+    % Enforce Joint limmits
+    for i = 1:4
+        if(abs(theta(i)) > joint_lims(i))
+            theta(i) = joint_lims(i)*sign(theta(i));
+        end
+    end
 
     % Calculate the next state of the chassis configuration using odometry
     % w,l, and r are the dimentions of the mechanum wheels (width,length, radius). 
