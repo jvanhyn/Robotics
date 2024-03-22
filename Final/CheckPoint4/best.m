@@ -1,13 +1,13 @@
 run robotinfo 
 
 %% Robot Initial conditions
-q0 = [pi/6,-0.2,0]';                   % position of body (x,y,phi)
+q0 = [pi/6,-0.2,0]';                   % position of body (phi,x,y)
 u0 = [0,0,0,0]';                       % wheel angles     (R^4)
 theta0 = [0,pi/4,-pi/4,-pi/6,0]';      % joint angles     (R^5)
 
 %% Generate Trajectory
 % Trajectory initial conditions
-qi = [0,0,0]';                  % position of body (x,y,phi)
+qi = [0,0,0]';                  % position of body (phi,x,y)
 ui = [0,0,0,0]';                       % wheel angles     (R^4)
 thetai = [0,pi/4,-pi/4,-pi/2,0]';      % joint angles     (R^5)
 

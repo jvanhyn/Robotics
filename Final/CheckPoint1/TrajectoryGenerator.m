@@ -54,6 +54,8 @@ function trajectory = TrajectoryGenerator(Tse_i,Tsc_i,Tsc_f,Tce_g,Tce_s,k,dt)
 % Concatanate trajectory segments
 trajectory = [T1;T2;T3;T4;T5;T6;T7;T8];
 
+writematrix(trajectory,"trajectory.csv")
+
 end
 
 
