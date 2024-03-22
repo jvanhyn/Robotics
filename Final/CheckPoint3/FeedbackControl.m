@@ -87,11 +87,11 @@ Q = pinv(J,1e-3)*Vb;
 dtheta = Q(5:end);
 du = Q(1:4);
 
-% % Backs Joint Away from Limit
-% for i = 1:4
-%     if(abs(theta(i)) > joint_lims(i))
-%         dtheta(i) = (-0.1)*sign(theta(i));
-%     end
-% end
+% Backs Joint Away from Limit
+for i = 1:4
+    if(abs(theta(i)) > joint_lims(i))
+        dtheta(i) = (-0.1)*sign(theta(i));
+    end
+end
 
 end
