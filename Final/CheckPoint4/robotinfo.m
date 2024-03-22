@@ -28,5 +28,5 @@ zsb = 0.0963;
 % Joint Velocity Limmits (DU,DTHETA)
 speed_max =  2*pi*[5250 	5250 	5250 	2850 	2800 	5250]/60;
 
-% Joint Limmits (U,THETA)
+% Joint Limits (U,THETA)
 joint_lims =  pi*[0.5 	0.7 	0.7 	0.7 	0.75 	0.75];
