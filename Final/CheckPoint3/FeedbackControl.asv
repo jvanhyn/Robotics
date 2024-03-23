@@ -22,7 +22,7 @@ function [du,dtheta,Vb,Xe,Xi] = FeedbackControl(theta,Tse,Tsd,Tsdn,Kp,Ki,Xi,dt,c
 % du: commanded wheel velocities                (in the set of R^4)
 % theta: commanded manipulator joint velocities (in the set of R^5)
 % Xe: error twist
-% Xi: integral of error twist
+% Xi: integral error twist
 
 %% Robot Info
 % Default Configurations 
@@ -71,7 +71,7 @@ control_p  = control(2)*control_p;    % toggle Proportional control
 control_i  = control(3)*control_i;    % toggle Integral control 
 
 % Commanded Twist
-Vb = control_ff + control_p + control_i;   
+Vb = control_ff + control_p + control(3)*control_i;   
 
 %% Jacobians
 Jm = JacobianBody(Blist,theta);

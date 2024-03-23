@@ -1,7 +1,6 @@
 close all; clear; clc;
 %#ok<*NASGU>
-% This is the parent script which calls and runs all other scripts in this
-% directory
+% This script calls abd runs the oth
 
 figfile = pwd + "/figs/";
 csvfile = pwd + "/csv/";

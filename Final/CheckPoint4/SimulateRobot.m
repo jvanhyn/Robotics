@@ -9,7 +9,7 @@ addpath(cd,'../CheckPoint3')
     SimulateRobot simulates the mobile manipulation of a cube using a KUKA youBot.
     A Feed Forward + PI contoller guids the robot along a pregenerated trajectory.
     The trajectory outlines a path from the robot to initial and final positions of the cube.
-    This script uses the following functions
+    This script uses the following functions:
 
     -> TrajectoryGenerator:
         takes waypoints

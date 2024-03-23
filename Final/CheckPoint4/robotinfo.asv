@@ -5,7 +5,7 @@ Tz = @(x,y,z,phi) [cos(phi) -sin(phi) 0        x; sin(phi)  cos(phi) 0         y
 
 %% Robot Info (http://www.youbot-store.com/wiki/index.php/YouBot_Detailed_Specifications)
 % This script contains information regarding the robot specifications
-% To be called in best.m/overshoot.m/newtask.m
+% To be called in best/overshoot/newtask sc
 % Reference Frames
 % End-Effector      {e}
 % Base              {0}

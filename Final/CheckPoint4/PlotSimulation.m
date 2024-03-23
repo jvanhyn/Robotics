@@ -8,7 +8,7 @@ plot(t,Xs(1:3,:)',"LineWidth",2)
 title("Angular Velocity Error","Interpreter","Latex")
 xlabel("Time (s)","Interpreter","Latex")
 ylabel("Angular Velocity (rad/s)","Interpreter","Latex")
-xlim([0 3])
+xlim([0 6])
 ylim([-1 1])
 xline(t(2*k/dt+63),'--',"Cube Grabbed","Interpreter","Latex");
 xline(t(5*k/dt+2*63),'--',"Cube Placed","Interpreter","Latex");
@@ -20,7 +20,7 @@ plot(t,Xs(4:6,:)',"LineWidth",2)
 title("Linear Velocity Error","Interpreter","Latex")
 xlabel("Time (s)","Interpreter","Latex")
 ylabel("Velocity (m/s)","Interpreter","Latex")
-xlim([0 3])
+xlim([0 6])
 ylim(3e-1*[-1 1])
 xline(t(2*k/dt+63),'--',"Cube Grabbed","Interpreter","Latex");
 xline(t(5*k/dt+2*63),'--',"Cube Placed","Interpreter","Latex");
