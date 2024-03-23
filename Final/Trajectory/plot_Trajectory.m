@@ -28,6 +28,7 @@ SZ = zeros(11,11);
 for i = 1:k:length(trajectory(:,1))
 cla(ax)
 hold on
+
 plot3(ax,x,y,z,'b','LineWidth',1)
 plot3(ax,x(1:i),y(1:i),z(1:i),'g','LineWidth',3)
 scatter3(ax,x(i),y(i),z(i),'r','filled')

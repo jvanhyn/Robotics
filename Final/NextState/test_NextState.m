@@ -5,6 +5,9 @@ addpath(cd,'../mr') % Add path to Modern Robotics scripts
 % Generates a .csv file to test that the robot chasis and end-effector 
 % are simulated appopriately and behave well in CoppeliaSim, Scene 6
 
+% Folder to save .csv
+cvsfolder = pwd + "/csv/";
+
 % Time variables
 t0 = 0;     % initial time
 tf = 2;     % final time
@@ -17,14 +20,13 @@ t = linspace(t0,tf,N);          % simulation time vector
 q0 = [0,0,0]';                  % chasis orientation and location
 u0 = [0,0,0,0]';                % wheel angles
 theta0 = [0,0,0,0,0]';          % manipulator arm joint angles
-
 gripClosed = false;             % gripper state
 
-% Maximum motor angular velocity
-speed_max = 10;
+% Maximum motor angular velocities
+speed_max = 2*pi*[5250 	5250 	5250 	2850 	2800 	5250]/60;
 
 % Constant control inputs
-du = -10*[-0.5,1,1,-0.5]';      % wheel velocities
+du = 10*[-0.5,2,2,-0.5]';      % wheel velocities
 dtheta = [0,0,0,10,0]';         % manipulator arm joint velocities
 
 % Preallocate state vectors for use in simulation loop 
@@ -47,9 +49,9 @@ for i = 1:N
 end
 
 %% Export data
-writematrix(Q,'robotMotion.csv')
+writematrix(Q,cvsfolder + "robotMotion.csv")
 
 %% Plot results
-run NextTestAnimation.m
+run plot_NextState.m
 
 
