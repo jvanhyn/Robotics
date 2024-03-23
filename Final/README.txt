@@ -30,9 +30,9 @@ The CheckPoint 4 folder contains the following scripts:
 	-TestSimulation: parent script which calls and runs all other scripts in this directory
 	-robotinfo: information regarding the robot specifications
 
-	-best: contains initial conditions for and generates the desired trajectory for the best case control 	scenario
-	-overshoot: contains initial conditions for and generates the desired trajectory for the overshoot control 	scenario
-	-newtask: contains initial conditions for and generates the desired trajectory for the new task control 	scenario
+	-best: contains initial conditions for and generates the desired trajectory for the best case control scenario
+	-overshoot: contains initial conditions for and generates the desired trajectory for the overshoot control scenario
+	-newtask: contains initial conditions for and generates the desired trajectory for the new task control scenario
 
-	-SimulateRobot: simulates the mobile manipulation of a cube using the youBot by calling the FeedbackControl 	and NextState functions
+	-SimulateRobot: simulates the mobile manipulation of a cube using the youBot by calling the FeedbackControl and NextState functions
 	-PlotSimulation: plots the error generated from SimulateRobot.m
